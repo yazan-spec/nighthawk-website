@@ -1,0 +1,7 @@
+node_modules/
+dist/
+dist-preview/
+media/variants/
+.preview-files.json
+.build-files.json
+.DS_Store
