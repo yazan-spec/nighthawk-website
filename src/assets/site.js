@@ -169,37 +169,39 @@
     }
   }
 
-  // --- selected work rail: pinned, scrolls horizontally with the page (desktop only)
-  const rail = document.querySelector('[data-rail]');
-  if (rail && !reduce) {
-    const track = rail.querySelector('[data-rail-track]');
-    const bar = rail.querySelector('[data-rail-bar]');
-    const count = rail.querySelector('[data-rail-count]');
-    const items = [...rail.querySelectorAll('[data-rail-item]')];
-    let dist = 0, top = 0, tick = false, active = true;
-    const measure = () => {
-      active = wide();
-      if (!active) { rail.style.height = ''; track.style.transform = ''; return; }
-      dist = track.scrollWidth - innerWidth;
-      rail.style.height = innerHeight + dist + 'px';
-      top = rail.getBoundingClientRect().top + scrollY;
-      move();
-    };
+  // --- selected work: stacked full-screen panels; the covered panel settles back and darkens
+  const stack = document.querySelector('[data-stack]');
+  if (stack) {
+    const panels = [...stack.querySelectorAll('[data-panel]')];
+    const count = document.querySelector('[data-stack-count]');
+    let tick = false;
     const move = () => {
       tick = false;
-      if (!active) return;
-      const p = Math.min(1, Math.max(0, (scrollY - top) / dist));
-      track.style.transform = `translate3d(${(-p * dist).toFixed(1)}px, 0, 0)`;
-      if (bar) bar.style.transform = `scaleX(${p.toFixed(4)})`;
-      if (count) {
-        const n = Math.min(items.length, Math.max(1, Math.round(p * (items.length - 1)) + 1));
-        count.textContent = `${String(n).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`;
-      }
+      const vh = innerHeight;
+      let active = 0;
+      panels.forEach((p, i) => {
+        const r = p.getBoundingClientRect();
+        const next = panels[i + 1];
+        if (r.top <= 1) active = i;
+        if (!next || reduce) return;
+        const nr = next.getBoundingClientRect();
+        const covered = Math.min(1, Math.max(0, 1 - nr.top / vh)); // 0 → next panel below, 1 → fully covering
+        p.querySelector('[data-panel-fig]').style.transform = `scale(${1 - covered * 0.08})`;
+        p.querySelector('[data-panel-shade]').style.opacity = (covered * 0.55).toFixed(3);
+      });
+      if (count) count.textContent = `${String(active + 1).padStart(2, '0')} / ${String(panels.length).padStart(2, '0')}`;
     };
     addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(move); } }, { passive: true });
-    addEventListener('resize', measure);
-    addEventListener('load', measure);
-    measure();
+    addEventListener('resize', move);
+    move();
+  }
+
+  // --- hero: the picture eases back as the page starts to move
+  const heroMedia = document.querySelector('.hero-media');
+  if (heroMedia && !reduce) {
+    let t = false;
+    const f = () => { t = false; const y = Math.min(scrollY, innerHeight); heroMedia.style.transform = `translate3d(0, ${(y * 0.28).toFixed(1)}px, 0) scale(${(1 + y / innerHeight * 0.06).toFixed(4)})`; };
+    addEventListener('scroll', () => { if (!t) { t = true; requestAnimationFrame(f); } }, { passive: true });
   }
 
   // --- sector list: image follows the pointer (fine pointers only)

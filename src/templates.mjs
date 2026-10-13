@@ -55,8 +55,9 @@ ${ctx.preview ? '<meta name="robots" content="noindex, nofollow">' : `<link rel=
 ${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitter:card" content="summary_large_image">` : ''}
 <meta name="theme-color" content="#f7f5f1">
 <link rel="icon" href="${url.asset('favicon.svg')}" type="image/svg+xml">
-<link rel="preload" href="${url.asset('fonts/cormorant-garamond.woff')}" as="font" type="font/woff" crossorigin>
-<link rel="preload" href="${url.asset('fonts/hanken-grotesk.woff')}" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="${url.asset('fonts/poppins-light.woff')}" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="${url.asset('fonts/poppins-medium.woff')}" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="${url.asset('fonts/poppins-regular.woff')}" as="font" type="font/woff" crossorigin>
 <link rel="stylesheet" href="${url.asset('assets/site.css')}?v=${ctx.hash}">
 <script type="application/ld+json">${JSON.stringify([org, ...jsonld])}</script>
 <script>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('nh-seen'))document.documentElement.classList.add('no-veil')}catch(e){}</script>
@@ -164,20 +165,17 @@ function sectorNames(ctx, p) {
   return p.sectors.map((s) => ctx.sectors[s].name).join(', ');
 }
 
-function card(ctx, url, p, span, n) {
-  const sizes = span >= 7 ? '(min-width: 1024px) 56vw, 100vw' : span >= 5 ? '(min-width: 1024px) 42vw, 100vw' : '(min-width: 1024px) 31vw, (min-width: 600px) 50vw, 100vw';
-  return `<li class="card card--${span}" data-reveal>
+function card(ctx, url, p, n) {
+  return `<li class="card" data-reveal>
   <a href="${url.to(`projects/${p.slug}/`)}" data-view>
-    <figure class="card-fig">${img(ctx, url, p.cover, { sizes, alt: '' })}</figure>
+    <figure class="card-fig">${img(ctx, url, p.cover, { sizes: '(min-width: 1024px) 33vw, (min-width: 600px) 50vw, 100vw', alt: '' })}</figure>
     <div class="card-cap"><span class="card-n">${pad(n)}</span><h3 class="card-title">${esc(p.title)}</h3><p class="card-meta">${sectorNames(ctx, p)}</p></div>
   </a>
 </li>`;
 }
 
-// Column spans for project grids (12-column): large/small pairs, an even pair, then a band of three.
-const RHYTHM = [7, 5, 5, 7, 6, 6, 4, 4, 4];
 function cardGrid(ctx, url, list) {
-  return `<ul class="cards">${list.map((p, i) => card(ctx, url, p, RHYTHM[i % RHYTHM.length], i + 1)).join('\n')}</ul>`;
+  return `<ul class="cards">${list.map((p, i) => card(ctx, url, p, i + 1)).join('\n')}</ul>`;
 }
 
 function contactBand(ctx, url) {
@@ -251,7 +249,7 @@ export function home(ctx) {
   <div class="hero-copy">
     <div>
       <h1 class="hero-title">From raw ground to the <em>finished room.</em></h1>
-      <p class="hero-sub">General contractor &amp; design–build · Houston, Texas</p>
+      <p class="hero-sub">General contractor &amp; design + build, Houston</p>
     </div>
     <div class="hero-side">
       <a class="hero-credit" href="${url.to(`projects/${slides[0].p.slug}/`)}" data-hero-credit>
@@ -275,25 +273,25 @@ export function home(ctx) {
   </div>
 </section>
 
-<section class="rail" data-rail aria-labelledby="work-h">
-  <div class="rail-sticky">
-    <div class="rail-head"><h2 id="work-h" class="label">Selected work</h2><span class="count" data-rail-count>01 / ${pad(railItems.length)}</span></div>
-    <ul class="rail-track" data-rail-track>
-      ${railItems.map((p, i) => {
-        const ref = RAIL_IMAGE[p.slug] ?? 0;
-        const im = p.images[ref];
-        const tall = im.w / im.h < 1;
-        return `<li class="rail-item${tall ? ' rail-item--tall' : ''}" data-rail-item>
-        <a href="${url.to(`projects/${p.slug}/`)}" data-view>
-          <figure class="rail-fig">${img(ctx, url, im, { sizes: tall ? '(min-width: 1024px) 34vw, 100vw' : '(min-width: 1024px) 58vw, 100vw', alt: '' })}</figure>
-          <div class="rail-cap"><span class="rail-n">${pad(i + 1)}</span><h3 class="rail-title">${esc(p.title)}</h3><p class="rail-meta">${sectorNames(ctx, p)}</p></div>
-        </a>
-      </li>`;
-      }).join('\n')}
-      <li class="rail-end"><a href="${url.to('projects/')}" data-view><span class="label">Archive</span>All ${projects.length} projects</a></li>
-    </ul>
-    <div class="rail-foot" aria-hidden="true"><i data-rail-bar></i></div>
+<section aria-labelledby="work-h">
+  <div class="stack-head wrap"><h2 id="work-h" class="label">Selected work</h2><span class="count" data-stack-count>01 / ${pad(railItems.length)}</span></div>
+  <div class="stack" data-stack>
+    ${railItems.map((p, i) => {
+      const ref = RAIL_IMAGE[p.slug] ?? 0;
+      const im = p.images[ref];
+      return `<article class="panel" data-panel>
+      <a href="${url.to(`projects/${p.slug}/`)}" data-view>
+        <figure data-panel-fig>${img(ctx, url, im, { sizes: '100vw', alt: '', eager: i === 0 })}</figure>
+        <div class="panel-cap">
+          <div><span class="panel-n">${pad(i + 1)} / ${pad(railItems.length)}</span><h3 class="panel-title">${esc(p.title)}</h3><p class="panel-meta">${sectorNames(ctx, p)}</p></div>
+          <span class="panel-view">View project</span>
+        </div>
+        <span class="panel-shade" data-panel-shade aria-hidden="true"></span>
+      </a>
+    </article>`;
+    }).join('\n')}
   </div>
+  <p class="stack-end"><a class="btn" href="${url.to('projects/')}">All ${projects.length} projects</a></p>
 </section>
 
 <figure class="interlude" data-parallax>
@@ -335,11 +333,11 @@ export function home(ctx) {
 
 // Which photograph each featured project shows on the homepage rail (index into its photo list).
 const RAIL_IMAGE = {
-  'the-james-whiskey-bar': 3,
-  '12459-mooremeadow': 2,
+  'the-james-whiskey-bar': 0,
+  '12459-mooremeadow': 3,
   'fioras-wine-bar': 0,
-  '7210-dearborn': 1,
-  '2727-kirby': 1,
+  '7210-dearborn': 0,
+  '2727-kirby': 4,
   'duo-spin-pilates': 1,
   '10135-kerrwood': 0,
 };
