@@ -8,13 +8,14 @@ const pad = (n) => String(n).padStart(2, '0');
 
 // ---------------------------------------------------------------- image
 function img(ctx, url, im, { sizes = '100vw', alt = '', eager = false, cls = '', fit = '' } = {}) {
-  const s = ctx.imageSources(im, url);
-  return `<img class="${cls}" src="${s.src}" srcset="${s.srcset}" sizes="${sizes}" width="${im.w}" height="${im.h}"` +
+  const small = /\(min-width: \d+px\) (?:[1-4]\d|50)vw/.test(sizes);
+  const s = ctx.imageSources(im, url, { small });
+  return `<img class="${cls}" src="${s.src}"${s.srcset ? ` srcset="${s.srcset}" sizes="${sizes}"` : ""} width="${im.w}" height="${im.h}"` +
     ` alt="${esc(alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"` +
     ` style="--tone:${im.color}${fit ? `;object-position:${fit}` : ''}">`;
 }
 
-const altFor = (p, i) => (p.alts && p.alts[i]) || `${p.title}, photograph ${i + 1} of ${p.images.length}`;
+const altFor = (p, i) => (p.alts && p.alts[i]) || `${p.title}, photograph ${p.images[i].n}`;
 
 // ---------------------------------------------------------------- shell
 function head(ctx, url, { title, description, ogImage, route, jsonld = [] }) {
@@ -237,8 +238,8 @@ export function home(ctx) {
       const d = ctx.imageSources(s.im, url);
       const m = s.mobile ? ctx.imageSources(s.mobile, url) : null;
       return `<figure class="hero-slide${i === 0 ? ' is-on' : ''}" data-slide data-project="${esc(s.p.title)}" data-href="${url.to(`projects/${s.p.slug}/`)}">
-      <picture>${m ? `<source media="(max-width: 767px) and (orientation: portrait)" srcset="${m.srcset}" sizes="100vw">` : ''}
-      <img src="${d.src}" srcset="${d.srcset}" sizes="100vw" width="${s.im.w}" height="${s.im.h}" alt="${esc(s.p.title)}"${i === 0 ? ' fetchpriority="high"' : ' loading="lazy"'} style="--tone:${s.im.color}"></picture>
+      <picture>${m ? `<source media="(max-width: 767px) and (orientation: portrait)" srcset="${m.src}">` : ''}
+      <img src="${d.src}"${d.srcset ? ` srcset="${d.srcset}" sizes="100vw"` : ""} width="${s.im.w}" height="${s.im.h}" alt="${esc(s.p.title)}"${i === 0 ? ' fetchpriority="high"' : ' loading="lazy"'} style="--tone:${s.im.color}"></picture>
     </figure>`;
     }).join('\n')}
     ${video ? `<video class="hero-video" data-hero-video muted playsinline loop preload="metadata" aria-hidden="true"
@@ -425,7 +426,7 @@ function block(ctx, url, p, b) {
   const fig = (i, sizes, cls = '') => {
     const im = p.images[i];
     const s = ctx.imageSources(im, url);
-    return `<figure class="pf ri ${cls}" style="--r:${(im.w / im.h).toFixed(4)}" data-reveal-img><a class="zoom" href="${s.large}" data-zoom="${i}" aria-label="View photograph ${i + 1} larger">${img(ctx, url, im, { sizes, alt: altFor(p, i) })}</a><span class="pf-n" aria-hidden="true">${pad(i + 1)}</span></figure>`;
+    return `<figure class="pf ri ${cls}" style="--r:${(im.w / im.h).toFixed(4)}" data-reveal-img><a class="zoom" href="${s.large}" data-zoom="${i}" aria-label="View photograph ${im.n} larger">${img(ctx, url, im, { sizes, alt: altFor(p, i) })}</a><span class="pf-n" aria-hidden="true">${pad(im.n)}</span></figure>`;
   };
   if (b.text) return p.narrative ? `<div class="b b-text wrap"><p class="narrative" data-reveal>${esc(p.narrative)}</p></div>` : '';
   if (b.full !== undefined) return `<div class="b b-full">${fig(b.full, '100vw')}</div>`;
@@ -459,7 +460,7 @@ export function project(ctx) {
     body: (url) => {
       const cs = ctx.imageSources(p.cover, url);
       return `
-<article class="project" data-gallery='${esc(JSON.stringify(p.images.map((im) => ctx.imageSources(im, url).large)))}'>
+<article class="project" data-gallery='${esc(JSON.stringify([...p.images, ...p.extras].map((im) => ctx.imageSources(im, url).large).filter((u) => u !== '#')))}'>
   <header class="p-hero ${fullHero ? 'p-hero--full' : 'p-hero--framed'}"${fullHero ? ' data-parallax' : ''}>
     <figure class="p-hero-fig"><a class="zoom" href="${cs.large}" data-zoom="0" aria-label="View cover photograph larger">${img(ctx, url, p.cover, { sizes: fullHero ? '100vw' : '(min-width: 1024px) 70vw, 100vw', alt: altFor(p, 0), eager: true })}</a></figure>
     <div class="p-hero-copy wrap">
@@ -477,6 +478,12 @@ export function project(ctx) {
   <div class="p-body">
     ${p.sequence.map((b) => block(ctx, url, p, b)).join('\n    ')}
   </div>
+  ${p.extras.length ? `<section class="p-all wrap" aria-labelledby="all-h">
+    <h2 id="all-h" class="label section-label">Complete photography <span class="count">${p.images.length + p.extras.length} photographs</span></h2>
+    <ul class="p-grid">
+      ${p.extras.map((im, k) => { const s = ctx.imageSources(im, url); const i = p.images.length + k; return `<li data-reveal><a class="zoom" href="${s.large}" data-zoom="${i}" aria-label="View photograph ${im.n} larger">${img(ctx, url, im, { sizes: '(min-width: 1024px) 33vw, 50vw', alt: `${p.title}, photograph ${im.n}` })}<span class="p-grid-n">${pad(im.n)}</span></a></li>`; }).join('')}
+    </ul>
+  </section>` : ''}
 </article>
 <nav class="p-next" aria-label="Next project" data-parallax>
   <a href="${url.to(`projects/${next.slug}/`)}" data-view>

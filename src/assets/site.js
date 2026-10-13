@@ -231,7 +231,9 @@
   const box = document.querySelector('[data-lightbox]');
   const gallery = document.querySelector('[data-gallery]');
   if (box && gallery && typeof box.showModal === 'function') {
-    const srcs = JSON.parse(gallery.dataset.gallery);
+    let srcs = JSON.parse(gallery.dataset.gallery || '[]');
+    // No explicit gallery (the inline preview build): read each photograph from its own zoom link
+    if (!srcs.length) srcs = [...document.querySelectorAll('[data-zoom]')].sort((a, b) => a.dataset.zoom - b.dataset.zoom).map((a) => a.getAttribute('href') === '#' ? a.querySelector('img')?.src : a.href);
     const img = box.querySelector('[data-lightbox-img]');
     const count = box.querySelector('[data-lightbox-count]');
     let i = 0, opener = null;

@@ -193,6 +193,5 @@ export const projects = [
   { title: '2723 Manila', sectors: ['residential'] },
 ];
 
-// Archive projects (no hand sequence) show at most this many photographs:
-// the strongest few, rather than every angle of every room.
-export const ARCHIVE_PHOTO_LIMIT = 8;
+// Every project page shows its edited sequence first (content/photo-manifest.txt), then every
+// remaining photograph of that project in a "Complete photography" grid (content/photo-index.json).

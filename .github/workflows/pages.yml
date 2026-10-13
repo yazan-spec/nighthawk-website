@@ -19,7 +19,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: npm install --no-audit --no-fund sharp@0.34
+      - run: npm install --no-audit --no-fund sharp@0.35
+      - run: node -e "const s=require('sharp');console.log(s.versions)"
       - run: node scripts/process-images.mjs
       - run: BASE_PATH=/${{ github.event.repository.name }} node src/build.mjs
       - uses: actions/upload-pages-artifact@v3

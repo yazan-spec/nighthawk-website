@@ -10,7 +10,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import config from '../site.config.mjs';
-import { projects as projectMeta, sectors, ARCHIVE_PHOTO_LIMIT } from '../content/projects.mjs';
+import { projects as projectMeta, sectors } from '../content/projects.mjs';
 import * as T from './templates.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -22,8 +22,23 @@ const CDN = 'https://images.squarespace-cdn.com/content/v1/5ed9692b0ecbf80872877
 const previewWidths = (v) => [v.widths.filter((w) => w <= 1600).at(-1) ?? v.widths[0]];
 
 // ---------------------------------------------------------------- photos
+// content/photo-index.json: every photograph of every project, numbered in the old site's order
+//   id → { title, slug, n, w, h, orig }   (id = Squarespace asset id; the file on disk is "<title>-NN.<ext>")
+// media/variants.json: generated sizes, keyed "<slug>/<title>-NN.<ext>"
+// content/photo-manifest.txt: the EDITED sequence per project (cover first); everything else goes to the complete grid.
 const variantsFile = path.join(ROOT, 'media', 'variants.json');
 const variants = fs.existsSync(variantsFile) ? JSON.parse(fs.readFileSync(variantsFile, 'utf8')) : {};
+const photoIndex = JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'photo-index.json'), 'utf8'));
+const variantByBase = {};
+for (const [key, v] of Object.entries(variants)) variantByBase[key.replace(/\.[^.]+$/, '')] = v;
+
+function photo(id) {
+  const ix = photoIndex[id];
+  if (!ix) throw new Error(`Unknown photograph id ${id}`);
+  const name = `${ix.title}-${String(ix.n).padStart(2, '0')}`;
+  const v = variantByBase[`${ix.slug}/${name}`];
+  return { id, name, n: ix.n, w: v?.w ?? ix.w, h: v?.h ?? ix.h, color: v?.color ?? '#d9d3c8', local: v, cdn: `${id}/${ix.orig}` };
+}
 
 function parseManifest() {
   const txt = fs.readFileSync(path.join(ROOT, 'content', 'photo-manifest.txt'), 'utf8');
@@ -31,16 +46,15 @@ function parseManifest() {
   for (const line of txt.split('\n')) {
     if (!line.trim() || line.startsWith('#')) continue;
     const [title, legacy, list] = line.split('|');
-    const images = list.split(';').map((s) => {
-      const [p, dim] = s.split('@');
-      const [id, file] = p.split('/');
-      const [w, h] = dim.split('x').map(Number);
-      const v = variants[id];
-      return { id, file, w: v?.w ?? w, h: v?.h ?? h, color: v?.color ?? '#d9d3c8', local: v };
-    });
+    const images = list.split(';').map((s) => photo(s.split('@')[0].split('/')[0]));
     map.set(title.trim(), { legacy: legacy.trim(), images });
   }
   return map;
+}
+
+// every photograph of a project, in the old site's order
+function allPhotos(title) {
+  return Object.entries(photoIndex).filter(([, ix]) => ix.title === title).sort((a, b) => a[1].n - b[1].n).map(([id]) => photo(id));
 }
 
 export const slugify = (s) =>
@@ -67,19 +81,33 @@ export function makeUrl(page) {
 }
 
 // Responsive image sources for a photo.
-export function imageSources(img, url) {
+// In the artifact preview every photograph is inlined as a data: URI (the preview host allows at most ~500
+// files per version and blocks third-party images); the production build is fully self-hosted and responsive.
+const dataUriCache = new Map();
+function dataUri(v, max = 1024) {
+  const w = v.widths.filter((x) => x <= max).at(-1) ?? v.widths[0];
+  const key = `${v.base}-${w}`;
+  if (!dataUriCache.has(key)) dataUriCache.set(key, 'data:image/webp;base64,' + fs.readFileSync(path.join(ROOT, 'media', 'variants', `${key}.webp`)).toString('base64'));
+  return dataUriCache.get(key);
+}
+export function imageSources(img, url, { small = false } = {}) {
+  if (img.local && PREVIEW) {
+    const u = dataUri(img.local, small ? 640 : 1024);
+    return { src: u, srcset: '', large: '#', absLarge: `${config.url}/img/${img.local.base}-${img.local.widths.at(-1)}.webp` };
+  }
   if (img.local) {
     const widths = PREVIEW ? previewWidths(img.local) : img.local.widths;
-    const srcset = widths.map((w) => `${url.asset(`img/${img.id}-${w}.webp`)} ${w}w`).join(', ');
+    const file = (w) => `img/${img.local.base}-${w}.webp`;
+    const srcset = widths.map((w) => `${url.asset(file(w))} ${w}w`).join(', ');
     const mid = widths.find((w) => w >= 1280) ?? widths[widths.length - 1];
     return {
-      src: url.asset(`img/${img.id}-${mid}.webp`),
+      src: url.asset(file(mid)),
       srcset,
-      large: url.asset(`img/${img.id}-${widths[widths.length - 1]}.webp`),
-      absLarge: `${config.url}/img/${img.id}-${img.local.widths[img.local.widths.length - 1]}.webp`,
+      large: url.asset(file(widths[widths.length - 1])),
+      absLarge: `${config.url}/${file(img.local.widths[img.local.widths.length - 1])}`,
     };
   }
-  const base = CDN + img.id + '/' + img.file;
+  const base = CDN + img.cdn;
   const widths = [500, 750, 1000, 1500, 2500].filter((w, i, a) => w <= img.w || a[i - 1] < img.w);
   return {
     src: `${base}?format=${widths.includes(1500) ? 1500 : widths.at(-1)}w`,
@@ -95,15 +123,15 @@ function buildProjects() {
   const list = projectMeta.map((m, order) => {
     const src = manifest.get(m.title);
     if (!src) throw new Error(`No photos in manifest for "${m.title}"`);
-    let images = src.images;
-    if (!m.sequence && images.length > ARCHIVE_PHOTO_LIMIT) {
-      images = [...images.slice(0, ARCHIVE_PHOTO_LIMIT - 1), images.at(-1)];
-    }
+    const images = src.images;
+    const seqIds = new Set(images.map((i) => i.id));
+    const extras = allPhotos(m.title).filter((i) => !seqIds.has(i.id)); // the complete photography, minus the edited sequence
     return {
       ...m,
       slug: m.slug ?? slugify(m.title),
       legacy: src.legacy,
       images,
+      extras,
       cover: images[0],
       order,
       location: m.location ?? null,
@@ -198,15 +226,14 @@ function build() {
   copyDir(path.join(ROOT, 'src', 'static'), OUT);
 
   // images
-  if (Object.keys(variants).length) {
-    const used = new Set(projects.flatMap((p) => p.images.map((i) => i.id)));
-    for (const id of used) {
-      const v = variants[id];
-      if (!v) continue;
+  if (Object.keys(variants).length && !PREVIEW) {
+    const used = new Map();
+    for (const p of projects) for (const im of [...p.images, ...p.extras]) if (im.local) used.set(im.local.base, im.local);
+    for (const [base, v] of used) {
       const widths = PREVIEW ? previewWidths(v) : v.widths;
       for (const w of widths) {
-        const name = `${id}-${w}.webp`;
-        fs.mkdirSync(path.join(OUT, 'img'), { recursive: true });
+        const name = `${base}-${w}.webp`;
+        fs.mkdirSync(path.dirname(path.join(OUT, 'img', name)), { recursive: true });
         fs.copyFileSync(path.join(ROOT, 'media', 'variants', name), path.join(OUT, 'img', name));
         written.push('img/' + name);
       }

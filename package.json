@@ -5,7 +5,7 @@
   "scripts": {
     "images": "node scripts/process-images.mjs",
     "build": "node src/build.mjs",
-    "preview": "node src/build.mjs --preview",
+    "preview": "node src/build.mjs --preview && node scripts/preview-entry.mjs",
     "serve": "npx --yes serve dist",
     "shoot": "node scripts/shoot.mjs"
   },

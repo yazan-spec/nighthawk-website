@@ -476,6 +476,16 @@ body.menu-open { overflow: hidden; }
 .p-next-copy { position: absolute; left: 0; right: 0; bottom: clamp(36px, 6vw, 80px); z-index: 1; display: grid; gap: 14px; }
 .p-next-title { font: 300 var(--t-xxl) / 1.02 var(--serif); letter-spacing: -0.03em; }
 
+/* complete photography grid on project pages */
+.p-all { padding-bottom: var(--sec); }
+.p-all .count { margin-left: auto; font: 500 var(--t-xs) / 1.4 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-3); }
+.p-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(8px, 1vw, 14px); }
+.p-grid a { position: relative; display: block; aspect-ratio: 3 / 2; overflow: hidden; background: var(--stone); }
+.p-grid img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease); }
+.p-grid a:hover img { transform: scale(1.04); }
+.p-grid-n { position: absolute; left: 12px; bottom: 10px; font: 500 var(--t-xs) / 1 var(--sans); letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5); font-variant-numeric: tabular-nums; }
+@media (max-width: 1023px) { .p-grid { grid-template-columns: repeat(2, 1fr); } }
+
 /* ---------------------------------------------------------------- about */
 .about { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--col); row-gap: clamp(48px, 7vw, 120px); padding-bottom: var(--sec); }
 .about-lede { grid-column: 1 / span 10; font: 300 var(--t-xl) / 1.15 var(--serif); letter-spacing: -0.025em; max-width: 17em; }
