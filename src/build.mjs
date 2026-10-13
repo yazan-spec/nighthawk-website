@@ -15,6 +15,7 @@ import * as T from './templates.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PREVIEW = process.argv.includes('--preview');
+const BASE = (process.env.BASE_PATH || '').replace(/\/$/, ''); // e.g. '/nighthawk-website' for GitHub Pages
 const OUT = path.join(ROOT, PREVIEW ? 'dist-preview' : 'dist');
 const CDN = 'https://images.squarespace-cdn.com/content/v1/5ed9692b0ecbf80872877fab/';
 // Preview builds ship one size per photo (artifact hosting caps file count).
@@ -54,10 +55,10 @@ export function makeUrl(page) {
     // route: '' | 'projects/' | 'projects/duo-coffee/'
     to(route) {
       if (PREVIEW) return up + route + (route === '' || route.endsWith('/') ? 'index.html' : '');
-      return '/' + route;
+      return BASE + '/' + route;
     },
     asset(p) {
-      return PREVIEW ? up + p : '/' + p;
+      return PREVIEW ? up + p : BASE + '/' + p;
     },
     abs(route) {
       return config.url + '/' + route;

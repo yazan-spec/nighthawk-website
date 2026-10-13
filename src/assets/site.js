@@ -95,7 +95,7 @@
     const opener = document.querySelector('.hero, .sector-hero, .p-hero--full');
     const update = () => {
       const y = scrollY;
-      const limit = opener ? opener.offsetHeight - 80 : 40;
+      const limit = opener && header.hasAttribute('data-overlay') ? opener.offsetHeight - 80 : 40;
       header.classList.toggle('is-solid', y > limit);
       header.classList.toggle('is-hidden', y > 500 && y > last + 2 && !body.classList.contains('menu-open'));
       last = y; ticking = false;

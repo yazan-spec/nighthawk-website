@@ -32,10 +32,10 @@ export default {
     // Cinematic sequence of stills, shown until the construction film exists.
     // Each entry: project slug + photo index (see content/photo-manifest.txt), optional portrait index for phones.
     slides: [
+      { project: '12459-mooremeadow', index: 3, mobile: 2 },
       { project: 'the-james-whiskey-bar', index: 0, mobile: 1 },
       { project: '7210-dearborn', index: 1 },
       { project: 'fioras-wine-bar', index: 1, mobile: 7 },
-      { project: '12459-mooremeadow', index: 1, mobile: 2 },
       { project: 'duo-spin-pilates', index: 2 },
     ],
     interval: 7000, // ms per still

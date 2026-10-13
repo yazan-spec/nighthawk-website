@@ -53,9 +53,9 @@ ${ctx.preview ? '<meta name="robots" content="noindex, nofollow">' : `<link rel=
 <meta property="og:description" content="${esc(description || config.description)}">
 <meta property="og:url" content="${canonical}">
 ${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitter:card" content="summary_large_image">` : ''}
-<meta name="theme-color" content="#0c0b0a">
+<meta name="theme-color" content="#f7f5f1">
 <link rel="icon" href="${url.asset('favicon.svg')}" type="image/svg+xml">
-<link rel="preload" href="${url.asset('fonts/bodoni-moda.woff')}" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="${url.asset('fonts/cormorant-garamond.woff')}" as="font" type="font/woff" crossorigin>
 <link rel="preload" href="${url.asset('fonts/hanken-grotesk.woff')}" as="font" type="font/woff" crossorigin>
 <link rel="stylesheet" href="${url.asset('assets/site.css')}?v=${ctx.hash}">
 <script type="application/ld+json">${JSON.stringify([org, ...jsonld])}</script>
@@ -69,13 +69,15 @@ const NAV = [
   ['process/', 'Process'],
 ];
 
-function header(ctx, url, { route }) {
+function header(ctx, url, { route, overlay }) {
   const { config, sectors } = ctx;
   const current = (r) => (route === r || (r === 'projects/' && (route.startsWith('projects') || sectors[route.replace('/', '')])) ? ' aria-current="page"' : '');
   return `<a class="skip" href="#main">Skip to content</a>
-<header class="site-header" data-header>
+<header class="site-header${overlay ? ' over-dark' : ''}" data-header${overlay ? ' data-overlay' : ''}>
   <a class="wordmark" href="${url.to('')}" aria-label="${esc(config.name)}, home">
-    <span class="wm-name">Nighthawk</span><span class="wm-rest">Construction Group</span>
+    <img class="wm-light" src="${url.asset('brand/emblem-light.png')}" width="1359" height="253" alt="">
+    <img class="wm-dark" src="${url.asset('brand/emblem-dark.png')}" width="1359" height="253" alt="">
+    <span class="wm-text">Nighthawk<small>Construction Group</small></span>
   </a>
   <nav class="nav" aria-label="Primary">
     <ul>${NAV.map(([r, l]) => `<li><a href="${url.to(r)}"${current(r)}>${l}</a></li>`).join('')}</ul>
@@ -127,20 +129,19 @@ function footer(ctx, url) {
       <li><a href="${config.social.instagram}" rel="noopener">Instagram</a></li><li><a href="${config.social.facebook}" rel="noopener">Facebook</a></li></ul>
     </nav>
   </div>
-  <p class="wrap footer-big" aria-hidden="true">Nighthawk</p>
+  <p class="wrap footer-big"><img src="${url.asset('brand/logo-light.png')}" width="1359" height="549" alt="${esc(config.name)}" loading="lazy"></p>
   <p class="wrap footer-legal"><span>© ${new Date().getFullYear()} ${config.name}</span><span>Houston, Texas</span></p>
 </footer>`;
 }
 
-function page(ctx, { title, description, ogImage, body, jsonld, bodyClass = '', veil = false }) {
+function page(ctx, { title, description, ogImage, body, jsonld, bodyClass = '', veil = false, overlay = false }) {
   const url = ctx.makeUrl(ctx.page);
   const route = ctx.page.replace(/index\.html$/, '').replace(/^404\.html$/, '404');
   return `${head(ctx, url, { title, description, ogImage, route, jsonld })}
 <body class="${bodyClass}">
-${veil ? `<div class="veil" data-veil aria-hidden="true"><p class="veil-word">${'Nighthawk'.split('').map((ch, i) => `<span style="--i:${i}">${ch}</span>`).join('')}</p><span class="veil-rule"></span></div>` : ''}
-<div class="grain" aria-hidden="true"></div>
+${veil ? `<div class="veil" data-veil aria-hidden="true"><img class="veil-mark" src="${url.asset('brand/logo-light.png')}" width="1359" height="549" alt=""><span class="veil-rule"></span></div>` : ''}
 <div class="cursor" data-cursor aria-hidden="true"><span>View</span></div>
-${header(ctx, url, { route })}
+${header(ctx, url, { route, overlay })}
 <main id="main">
 ${body(url)}
 </main>
@@ -227,6 +228,7 @@ export function home(ctx) {
     title: '',
     bodyClass: 'is-home',
     veil: true,
+    overlay: true,
     ogImage: ogUrl,
     body: (url) => {
       const video = h.video;
@@ -245,10 +247,11 @@ export function home(ctx) {
       data-desktop='${esc(JSON.stringify(video.desktop))}' data-mobile='${esc(JSON.stringify(video.mobile || video.desktop))}'></video>` : ''}
   </div>
   <div class="hero-shade" aria-hidden="true"></div>
+  <div class="hero-brand" aria-hidden="true"><img src="${url.asset('brand/logo-light.png')}" width="1359" height="549" alt="" fetchpriority="high"></div>
   <div class="hero-copy">
     <div>
-      <h1 class="hero-title">From raw ground<br>to the <em>finished</em> room.</h1>
-      <p class="hero-sub">General contractor &amp; design–build, Houston</p>
+      <h1 class="hero-title">From raw ground to the <em>finished room.</em></h1>
+      <p class="hero-sub">General contractor &amp; design–build · Houston, Texas</p>
     </div>
     <div class="hero-side">
       <a class="hero-credit" href="${url.to(`projects/${slides[0].p.slug}/`)}" data-hero-credit>
@@ -391,6 +394,7 @@ export function sector(ctx) {
   const im = photo(s.hero);
   return page(ctx, {
     title: s.name,
+    overlay: true,
     description: `${s.name} by Nighthawk Construction Group, Houston. ${s.lede}`,
     ogImage: ctx.imageSources(im, ctx.makeUrl('')).absLarge,
     body: (url) => `
@@ -444,6 +448,7 @@ export function project(ctx) {
     description: p.narrative ? `${p.narrative} ${sectorNames(ctx, p)} project by Nighthawk Construction Group.` : `${p.title}: a ${sectorNames(ctx, p).toLowerCase()} project by Nighthawk Construction Group, Houston.`,
     ogImage: ctx.imageSources(p.cover, ctx.makeUrl('')).absLarge,
     bodyClass: 'is-project',
+    overlay: fullHero,
     jsonld: [{
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
