@@ -60,6 +60,13 @@ function studio(n) {
   return { id: `studio-${n}`, name, n, w: v.w, h: v.h, color: v.color, local: v, cdn: null };
 }
 
+// photograph number n (as numbered on disk, 1 = first) of a project
+function photoN(title, n) {
+  const hit = Object.entries(photoIndex).find(([, ix]) => ix.title === title && ix.n === n);
+  if (!hit) throw new Error(`No photograph ${n} for ${title}`);
+  return photo(hit[0]);
+}
+
 // every photograph of a project, in the old site's order
 function allPhotos(title) {
   return Object.entries(photoIndex).filter(([, ix]) => ix.title === title).sort((a, b) => a[1].n - b[1].n).map(([id]) => photo(id));
@@ -128,12 +135,17 @@ export function imageSources(img, url, { small = false } = {}) {
 // ---------------------------------------------------------------- assemble data
 function buildProjects() {
   const manifest = parseManifest();
-  const list = projectMeta.map((m, order) => {
+  // Portfolio order = the order projects appear on the existing site (first appearance in photo-index.json)
+  const siteOrder = [];
+  for (const ix of Object.values(photoIndex)) if (!siteOrder.includes(ix.title)) siteOrder.push(ix.title);
+  const list = projectMeta.filter((m) => !m.hidden).map((m) => {
+    const order = siteOrder.indexOf(m.title);
     const src = manifest.get(m.title);
     if (!src) throw new Error(`No photos in manifest for "${m.title}"`);
-    const images = src.images;
-    const seqIds = new Set(images.map((i) => i.id));
-    const extras = allPhotos(m.title).filter((i) => !seqIds.has(i.id)); // the complete photography, minus the edited sequence
+    // Photographs run in the existing site's order (cover = its first photograph); exact duplicate files within a project are dropped.
+    const seen = new Set();
+    const images = allPhotos(m.title).filter((i) => { const k = i.local?.base ?? i.id; if (seen.has(k)) return false; seen.add(k); return true; });
+    const extras = [];
     return {
       ...m,
       slug: m.slug ?? slugify(m.title),
@@ -143,7 +155,7 @@ function buildProjects() {
       cover: images[0],
       order,
       location: m.location ?? null,
-      sequence: m.sequence ?? autoSequence(images, !!m.narrative),
+      sequence: [],
     };
   });
   for (const p of list) {
@@ -152,7 +164,7 @@ function buildProjects() {
       for (const i of idx) if (!p.images[i]) throw new Error(`${p.title}: sequence points at missing photo ${i}`);
     }
   }
-  return list;
+  return list.sort((a, b) => a.order - b.order);
 }
 
 const ratio = (im) => im.w / im.h;
@@ -249,7 +261,7 @@ function build() {
     }
   }
 
-  const ctx = { config, sectors, projects, bySlug, featured, photo, studio, hash, preview: PREVIEW, imageSources, makeUrl };
+  const ctx = { config, sectors, projects, bySlug, featured, photo, photoN, studio, hash, preview: PREVIEW, imageSources, makeUrl };
 
   const pages = [
     ['index.html', T.home],

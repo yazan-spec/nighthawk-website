@@ -20,7 +20,7 @@ const altFor = (p, i) => (p.alts && p.alts[i]) || `${p.title}, photograph ${p.im
 // ---------------------------------------------------------------- shell
 function head(ctx, url, { title, description, ogImage, route, jsonld = [] }) {
   const { config } = ctx;
-  const full = title ? `${title} — ${config.name}` : `${config.name} — Houston general contractor & design–build`;
+  const full = title ? `${title} | ${config.name}` : `${config.name} | Houston General Contractor & Design-Build Firm`;
   const canonical = url.abs(route);
   const org = {
     '@context': 'https://schema.org',
@@ -39,6 +39,11 @@ function head(ctx, url, { title, description, ogImage, route, jsonld = [] }) {
     },
     areaServed: { '@type': 'City', name: 'Houston' },
     sameAs: Object.values(config.social),
+    knowsAbout: ['General contracting', 'Design-build', 'Custom home construction', 'Home renovation', 'Restaurant and bar construction', 'Commercial tenant build-outs', 'Investor and builder services', 'Custom cabinetry and millwork'],
+    hasOfferCatalog: { '@type': 'OfferCatalog', name: 'Construction services', itemListElement: [
+      'Design-build services', 'Residential new construction and renovations', 'Commercial construction and tenant build-outs',
+      'Restaurant, bar and hospitality construction', 'Investor and builder services', 'Custom cabinetry and displays',
+    ].map((name) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name, areaServed: 'Houston, TX' } })) },
   };
   return `<!doctype html>
 <html lang="en">
@@ -54,7 +59,7 @@ ${ctx.preview ? '<meta name="robots" content="noindex, nofollow">' : `<link rel=
 <meta property="og:description" content="${esc(description || config.description)}">
 <meta property="og:url" content="${canonical}">
 ${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitter:card" content="summary_large_image">` : ''}
-<meta name="theme-color" content="#f7f5f1">
+<meta name="theme-color" content="#141210">
 <link rel="icon" href="${url.asset('favicon.svg')}" type="image/svg+xml">
 <link rel="preload" href="${url.asset('fonts/poppins-light.woff')}" as="font" type="font/woff" crossorigin>
 <link rel="preload" href="${url.asset('fonts/poppins-medium.woff')}" as="font" type="font/woff" crossorigin>
@@ -79,7 +84,6 @@ function header(ctx, url, { route, overlay }) {
 <header class="site-header${overlay ? ' over-dark' : ''}" data-header${overlay ? ' data-overlay' : ''}>
   <a class="wordmark" href="${url.to('')}" aria-label="${esc(config.name)}, home">
     <img class="wm-light" src="${url.asset('brand/logo-light.png')}" width="1359" height="549" alt="">
-    <img class="wm-dark" src="${url.asset('brand/logo-dark.png')}" width="1359" height="549" alt="">
   </a>
   <nav class="nav" aria-label="Primary">
     <ul>${NAV.map(([r, l]) => `<li><a href="${url.to(r)}"${current(r)}>${l}</a></li>`).join('')}</ul>
@@ -187,10 +191,10 @@ function contactBand(ctx, url) {
 
 // The four sectors Nighthawk serves (wording from nighthawkcg.com), each linking to its part of the Services page.
 const SECTOR_TILES = [
-  { key: 'commercial', name: 'Commercial Development & Tenant Build-Outs', anchor: 'commercial', img: { project: 'duo-spin-pilates', index: 2 } },
-  { key: 'residential', name: 'Residential New Construction & Renovations', anchor: 'residential', img: { project: '12459-mooremeadow', index: 1 } },
-  { key: 'hospitality', name: 'Restaurants, Bars & Nightclubs', anchor: 'hospitality', img: { project: 'the-james-whiskey-bar', index: 10 } },
-  { key: 'development', name: 'Builder Services & Investment Properties', anchor: 'investor', img: { project: '2926-fontana', index: 0 } },
+  { key: 'commercial', name: 'Commercial Development & Tenant Build-Outs', anchor: 'commercial', img: { project: 'duo-coffee', index: 0 }, alt: 'Commercial construction in Houston: DUO Coffee building exterior' },
+  { key: 'residential', name: 'Residential New Construction & Renovations', anchor: 'residential', img: { project: '12459-mooremeadow', index: 4 }, alt: 'Custom home construction in Houston: walnut and marble kitchen at 12459 Mooremeadow' },
+  { key: 'hospitality', name: 'Restaurants, Bars & Nightclubs', anchor: 'hospitality', img: { project: 'the-james-whiskey-bar', index: 0 }, alt: 'Restaurant and bar construction in Houston: The James Whiskey Bar' },
+  { key: 'development', name: 'Builder Services & Investment Properties', anchor: 'investor', img: { project: '1703-reverse', index: 0 }, alt: 'Spec home built for investors in Houston: 1703 Reverse exterior' },
 ];
 
 const STEPS = [
@@ -209,10 +213,11 @@ export function home(ctx) {
   const slides = h.slides.map((s) => ({ p: bySlug[s.project], im: bySlug[s.project].images[s.index], mobile: s.mobile ? bySlug[s.project].images[s.mobile] : null }));
   const ogUrl = ctx.imageSources(slides[0].im, ctx.makeUrl('')).absLarge;
   const panels = config.featured.map((f) => ({ p: bySlug[f.project], im: bySlug[f.project].images[f.index] }));
-  const more = config.moreWork.map((slug) => bySlug[slug]);
+  const details = config.details.map(([title, n]) => ({ im: ctx.photoN(title, n), p: ctx.projects.find((q) => q.title === title) }));
 
   return page(ctx, {
     title: '',
+    description: 'Nighthawk Construction Group is a Houston general contractor and design-build firm: custom homes and renovations, restaurant and bar construction, commercial tenant build-outs and investor services, from concept to completion.',
     bodyClass: 'is-home',
     veil: true,
     overlay: true,
@@ -255,11 +260,11 @@ export function home(ctx) {
 <section class="intro wrap" aria-labelledby="intro-h">
   <div class="intro-lead" data-reveal>
     <p class="label">Nighthawk Construction Group · Houston, Texas</p>
-    <h2 id="intro-h" class="intro-title">One team, from the first concept to the finished build.</h2>
+    <h2 id="intro-h" class="intro-title">One team, from concept to the finished product.</h2>
   </div>
   <div class="intro-text" data-reveal>
-    <p>Nighthawk streamlines the entire design + build process. Design, engineering, permitting and construction are handled by the same team, which means one point of accountability and no hassle of coordinating multiple contractors.</p>
-    <p>We deliver across commercial, residential, hospitality and investor projects, with all your construction needs under one set of wings.</p>
+    <p>Nighthawk Construction Group is a Houston general contractor and design-build firm. Design, engineering, permitting and construction are handled by the same team, which means one point of accountability and none of the hassle of coordinating multiple contractors.</p>
+    <p>We build custom homes and renovations, restaurants and bars, and commercial spaces across Houston, with all your construction needs under one set of wings.</p>
     <ul class="intro-links">
       <li><a class="link" href="${url.to('projects/')}">See our portfolio</a></li>
       <li><a class="link" href="${url.to('services/')}">View our services</a></li>
@@ -284,10 +289,12 @@ export function home(ctx) {
   </div>
 </section>
 
-<section class="more wrap" aria-labelledby="more-h">
-  <h2 id="more-h" class="label section-label">More from the portfolio</h2>
-  ${cardGrid(ctx, url, more)}
-  <p class="more-end"><a class="btn" href="${url.to('projects/')}">View the full portfolio</a></p>
+<section class="details" aria-labelledby="details-h">
+  <div class="wrap details-head"><h2 id="details-h" class="label">Details</h2><div class="details-ctl"><button type="button" data-strip-prev aria-label="Previous photographs">←</button><button type="button" data-strip-next aria-label="Next photographs">→</button></div></div>
+  <ul class="strip" data-strip>
+    ${details.map(({ im, p }) => `<li><a href="${url.to(`projects/${p.slug}/`)}" data-view>${img(ctx, url, im, { sizes: '(min-width: 1024px) 38vw, 82vw', alt: `${p.title}, ${sectorNames(ctx, p).toLowerCase()} construction detail by Nighthawk, Houston` })}<span class="strip-cap">${esc(p.title)}</span></a></li>`).join('\n    ')}
+  </ul>
+  <p class="more-end wrap"><a class="btn" href="${url.to('projects/')}">View the full portfolio</a></p>
 </section>
 
 <section class="sectors on-bone" aria-labelledby="sectors-h">
@@ -295,10 +302,18 @@ export function home(ctx) {
     <h2 id="sectors-h" class="label section-label">Sectors we serve</h2>
     <ul class="tiles">
       ${SECTOR_TILES.map((t) => `<li class="tile" data-reveal><a href="${url.to('services/')}#${t.anchor}">
-        <figure class="tile-fig">${img(ctx, url, photo(t.img), { sizes: '(min-width: 1024px) 25vw, 50vw', alt: '' })}</figure>
+        <figure class="tile-fig">${img(ctx, url, photo(t.img), { sizes: '(min-width: 1024px) 25vw, 50vw', alt: t.alt })}</figure>
         <span class="tile-name">${t.name}</span>
       </a></li>`).join('\n')}
     </ul>
+  </div>
+</section>
+
+<section class="seo wrap" aria-labelledby="seo-h">
+  <h2 id="seo-h" class="seo-title" data-reveal>A Houston general contractor for custom homes, restaurants and commercial spaces.</h2>
+  <div class="seo-text" data-reveal>
+    <p>Based in Houston, Texas, Nighthawk Construction Group works with homeowners, restaurant and bar owners, business owners and real estate investors. As a design-build contractor we take projects from architectural drawings and MEP engineering through permitting, construction and finishing, so a new custom home, a whole-house renovation, a restaurant build-out or a commercial tenant improvement is delivered by one accountable team.</p>
+    <p>Backed by more than a decade of experience in investment properties, project management and construction, we bring proven problem-solving and a hands-on approach to every project, from spec homes for investors to high-end hospitality interiors.</p>
   </div>
 </section>
 
@@ -309,19 +324,17 @@ ${contactBand(ctx, url)}`;
 
 // ---------------------------------------------------------------- portfolio
 export function projectsIndex(ctx) {
-  const { projects, featured } = ctx;
-  const rest = projects.filter((p) => !p.featured);
-  const ordered = [...featured, ...rest];
+  const { projects } = ctx;
   return page(ctx, {
-    title: 'Portfolio',
-    description: 'Custom residences, restaurants and bars, and commercial build-outs by Nighthawk Construction Group, Houston.',
+    title: 'Portfolio: Custom Homes, Restaurants & Commercial Construction in Houston',
+    description: 'A portfolio of Houston construction projects by Nighthawk Construction Group: custom homes and renovations, restaurants, bars and cafés, and commercial build-outs, all delivered design-build.',
     body: (url) => `
 <header class="page-head wrap">
   <h1 class="page-title">Portfolio</h1>
-  ${filters(ctx, url, null)}
+  <p class="page-lede">Custom homes, restaurants and bars, and commercial spaces across Houston, built by one design-build team.</p>
 </header>
 <section class="wrap" aria-label="Projects">
-  ${cardGrid(ctx, url, ordered)}
+  ${cardGrid(ctx, url, projects)}
 </section>
 ${contactBand(ctx, url)}`,
   });
@@ -342,14 +355,14 @@ export function sector(ctx) {
   const s = sectors[key];
   const list = projects.filter((p) => p.sectors.includes(key)).sort((a, b) => (a.featured || 99) - (b.featured || 99) || a.order - b.order);
   return page(ctx, {
-    title: s.name,
-    description: `${s.name} by Nighthawk Construction Group, Houston. ${s.lede}`,
+    title: `${s.name} Construction in Houston`,
+    description: `${s.name} projects by Nighthawk Construction Group, a Houston general contractor and design-build firm. ${s.lede}`,
     ogImage: ctx.imageSources(list[0].cover, ctx.makeUrl('')).absLarge,
     body: (url) => `
 <header class="page-head wrap">
-  <p class="label">Portfolio</p>
+  <p class="p-crumb"><a class="link" href="${url.to('projects/')}">Portfolio</a></p>
   <h1 class="page-title">${s.name}</h1>
-  ${filters(ctx, url, key)}
+  <p class="page-lede">${esc(s.lede)}</p>
 </header>
 <section class="wrap" aria-label="${s.name} projects">${cardGrid(ctx, url, list)}</section>
 ${contactBand(ctx, url)}`,
@@ -362,8 +375,8 @@ export function project(ctx) {
   const credits = Object.entries(p.credits || {});
   const all = [...p.images, ...p.extras];
   return page(ctx, {
-    title: p.title,
-    description: p.narrative ? `${p.narrative} ${sectorNames(ctx, p)} project by Nighthawk Construction Group.` : `${p.title}: a ${sectorNames(ctx, p).toLowerCase()} project by Nighthawk Construction Group, Houston.`,
+    title: `${p.title} | ${sectorNames(ctx, p)} Construction in Houston`,
+    description: `${p.title}: ${p.narrative ? p.narrative + ' ' : ''}A ${sectorNames(ctx, p).toLowerCase()} project built design-build by Nighthawk Construction Group, Houston general contractor.`,
     ogImage: ctx.imageSources(p.cover, ctx.makeUrl('')).absLarge,
     bodyClass: 'is-project',
     jsonld: [{
@@ -404,63 +417,59 @@ export function project(ctx) {
 }
 
 // ---------------------------------------------------------------- services
-// Wording adapted from nighthawkcg.com/services.
+// Wording adapted from nighthawkcg.com/services. Each service is one full-screen panel of the reel.
 const SERVICES = [
-  { id: 'design-build', title: 'Design–Build', studio: 6,
-    lead: 'A true one-stop shop for residential and commercial construction.',
-    body: ['Our integrated design–build process brings creative designers, skilled engineers and seasoned project managers together under one roof, so your vision is carried from concept to completion without hand-offs.',
-      'Every detail is managed before the first shovel hits the ground, so construction can begin sooner and finish stronger.'],
-    list: ['Interior and exterior design & architectural drawings', 'Mechanical, electrical and plumbing (MEP) engineering drawings', 'Permit acquisition and expediting to accelerate project start times'] },
-  { id: 'commercial', title: 'Commercial', studio: 1,
+  { id: 'design-build', title: 'Design–Build', img: (ctx) => ctx.studio(8), kicker: 'One roof, one team',
+    lead: 'A true one-stop shop for residential and commercial construction in Houston.',
+    body: 'Creative designers, skilled engineers and seasoned project managers work together under one roof, so your vision is carried from concept to completion without hand-offs. Every detail is managed before the first shovel hits the ground, so construction begins sooner and finishes stronger.',
+    list: ['Interior and exterior design & architectural drawings', 'Mechanical, electrical and plumbing (MEP) engineering drawings', 'Permit acquisition and expediting'] },
+  { id: 'residential', title: 'Residential', img: (ctx) => ctx.bySlug['12459-mooremeadow'].images[4], kicker: 'New construction & renovations',
+    lead: 'Custom homes and whole-house renovations, built by a team that cares.',
+    body: 'Your home deserves a builder who understands how to create refined living spaces. We combine skilled craftsmanship with decades of experience to deliver exceptional project management and stunning interiors, sourcing high-quality, cost-effective materials to make your dream home a reality.' },
+  { id: 'commercial', title: 'Commercial', img: (ctx) => ctx.bySlug['duo-coffee'].images[0], kicker: 'Development & tenant build-outs',
     lead: 'Spaces that work for the business and express the brand.',
-    body: ['We focus on the quality of construction and on the functionality, efficiency and brand expression of every commercial environment. From concept to completion, we deliver projects that embody your brand and support its long-term success.'],
-    list: ['Office build-outs and renovations', 'Commercial tenant and retail spaces', 'Gyms and fitness centers', 'Med-spas and wellness facilities'] },
-  { id: 'residential', title: 'Residential', studio: 7,
-    lead: 'New construction and custom renovations, built by a team that cares.',
-    body: ['Your home deserves a builder who understands how to create refined living spaces. Our design–build team combines skilled craftsmanship with decades of experience to deliver exceptional project management and stunning interiors.',
-      'We source high-quality, cost-effective materials to exceed expectations and make your dream home a reality.'] },
-  { id: 'hospitality', title: 'Hospitality', studio: 5,
-    lead: 'Turnkey restaurants, bars and nightlife venues.',
-    body: ['With a proven track record in hospitality, including owning and operating some of Houston’s most successful nightlife venues, we understand how critical first impressions are. We bring that hands-on experience, strategic insight and tailored solutions to every venue we build.',
-      'Our turnkey construction concepts let you stay focused on your vision while we bring it to life with precision and efficiency.'] },
-  { id: 'investor', title: 'Investor & Builder Services', studio: 2,
+    body: 'We focus on the quality of construction and on the functionality, efficiency and brand expression of every commercial environment, delivering projects that embody your brand and support its long-term success.',
+    list: ['Office build-outs and renovations', 'Commercial tenant and retail spaces', 'Gyms, fitness centers, med-spas and wellness facilities'] },
+  { id: 'hospitality', title: 'Hospitality', img: (ctx) => ctx.bySlug['the-james-whiskey-bar'].images[0], kicker: 'Restaurants, bars & nightclubs',
+    lead: 'Turnkey venues from a team that has owned and operated them.',
+    body: 'With a proven track record in hospitality, including some of Houston’s most successful nightlife venues, we understand how critical first impressions are. Our turnkey construction concepts let you stay focused on your opening while we bring the room to life with precision and efficiency.' },
+  { id: 'investor', title: 'Investor & Builder Services', img: (ctx) => ctx.bySlug['1703-reverse'].images[0], kicker: 'Spec homes & investment properties',
     lead: 'Cost-effective building strategies that maximize returns.',
-    body: ['Years of hands-on real estate investing have given us a deep understanding of cost-effective building across commercial and residential projects. We partner with investors on everything from single-family homes to multi-family and commercial developments, with exclusive services for high-volume clients.',
-      'Specializing in distressed properties, we apply proven strategies other contractors often overlook, helping you unlock hidden value and increase profitability.'] },
-  { id: 'cabinetry', title: 'Custom Cabinetry & Displays', studio: 3,
-    lead: 'Bespoke millwork that blends beauty with function.',
-    body: ['We design and build custom pieces for both residential and commercial projects, from striking retail displays and reception desks to timeless kitchens, closets and baths.'] },
+    body: 'Years of hands-on real estate investing have given us a deep understanding of cost-effective building. We partner with investors on everything from spec homes and single-family builds to multi-family and commercial developments, with exclusive services for high-volume clients and proven strategies for distressed properties.' },
+  { id: 'cabinetry', title: 'Custom Cabinetry & Displays', img: (ctx) => ctx.bySlug['12459-mooremeadow'].images[10], kicker: 'Bespoke millwork',
+    lead: 'Millwork that blends beauty with function.',
+    body: 'We design and build custom pieces for residential and commercial projects alike, from striking retail displays and reception desks to timeless kitchens, closets and baths.' },
 ];
 
 export function services(ctx) {
-  const { studio } = ctx;
   return page(ctx, {
-    title: 'Services',
-    description: 'Design–build, commercial, residential, hospitality and investor construction services from Nighthawk Construction Group, Houston.',
+    title: 'Construction Services in Houston: Design-Build, Residential, Commercial & Hospitality',
+    description: 'Nighthawk Construction Group’s services in Houston: design-build with in-house drawings and MEP engineering, custom home construction and renovations, commercial tenant build-outs, restaurant and bar construction, investor and builder services, and custom cabinetry.',
+    overlay: true,
     body: (url) => `
-<header class="page-head wrap">
-  <h1 class="page-title">Services</h1>
-  <p class="page-lede">Above-and-beyond craftsmanship, from pre-construction through design, build and finishing, across commercial, residential, hospitality and investor projects.</p>
-</header>
-<section class="svc-intro wrap" aria-label="Our approach">
-  <figure class="svc-intro-fig ri" data-reveal-img>${img(ctx, url, studio(4), { sizes: '(min-width: 1024px) 56vw, 100vw', alt: '' })}</figure>
-  <div class="svc-intro-text" data-reveal>
-    <p>Our mission is simple: to exceed every client’s expectations while delivering work we are truly passionate about. From initial concept through final completion, we bring the same care, precision and accountability to every project.</p>
-    <p>We combine impeccable design, expert construction and hands-on project management to deliver consistent, authentic and distinctive results, managing every phase of the process ourselves.</p>
+<header class="svc-hero" aria-label="Services">
+  <figure class="svc-hero-fig">${img(ctx, url, ctx.studio(5), { sizes: '100vw', alt: 'Houston skyline at dusk', eager: true })}</figure>
+  <div class="svc-hero-copy wrap">
+    <p class="label">Services · Houston, Texas</p>
+    <h1 class="page-title">Above-and-beyond craftsmanship, <em>from concept to completion.</em></h1>
+    <p class="page-lede">Our mission is simple: to exceed every client’s expectations while delivering work we are truly passionate about. Design, construction and hands-on project management, every phase handled by one team.</p>
   </div>
-</section>
-<ol class="svc-list">
-  ${SERVICES.map((s, i) => `<li class="svc svc--${i % 2 ? 'r' : 'l'} wrap" id="${s.id}">
-    <figure class="svc-fig ri" data-reveal-img>${img(ctx, url, studio(s.studio), { sizes: '(min-width: 1024px) 50vw, 100vw', alt: '' })}</figure>
-    <div class="svc-text" data-reveal>
-      <span class="svc-n">${pad(i + 1)}</span>
-      <h2 class="svc-title">${s.title}</h2>
+  <ol class="svc-index" aria-label="Services on this page">${SERVICES.map((s, i) => `<li><a href="#${s.id}"><span>${pad(i + 1)}</span>${s.title}</a></li>`).join('')}</ol>
+</header>
+<div class="stack-head wrap"><h2 class="label">What we do</h2><span class="count" data-stack-count>01 / ${pad(SERVICES.length)}</span></div>
+<div class="stack" data-stack>
+  ${SERVICES.map((s, i) => `<section class="panel panel--svc" data-panel id="${s.id}" aria-labelledby="${s.id}-h">
+    <figure data-panel-fig>${img(ctx, url, s.img(ctx), { sizes: '100vw', alt: '' })}</figure>
+    <div class="svc-copy wrap">
+      <p class="svc-kicker"><span class="svc-n">${pad(i + 1)} / ${pad(SERVICES.length)}</span>${s.kicker}</p>
+      <h2 id="${s.id}-h" class="svc-title">${s.title}</h2>
       <p class="svc-lead">${s.lead}</p>
-      ${s.body.map((t) => `<p>${t}</p>`).join('')}
+      <p class="svc-body">${s.body}</p>
       ${s.list ? `<ul class="svc-bullets">${s.list.map((t) => `<li>${t}</li>`).join('')}</ul>` : ''}
     </div>
-  </li>`).join('\n')}
-</ol>
+    <span class="panel-shade" data-panel-shade aria-hidden="true"></span>
+  </section>`).join('\n  ')}
+</div>
 <section class="steps on-bone" aria-labelledby="steps-h">
   <div class="wrap">
     <h2 id="steps-h" class="label section-label">How a project runs</h2>
@@ -478,8 +487,8 @@ export function contact(ctx) {
   const { config } = ctx;
   const c = config.contact;
   return page(ctx, {
-    title: 'Contact',
-    description: `Contact Nighthawk Construction Group in Houston: ${c.email}, ${c.phone}.`,
+    title: 'Contact a Houston General Contractor',
+    description: `Contact Nighthawk Construction Group, Houston general contractor and design-build firm, about a custom home, renovation, restaurant or commercial project: ${c.email}, ${c.phone}.`,
     body: (url) => `
 <section class="contact wrap">
   <div class="contact-info">

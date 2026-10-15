@@ -92,7 +92,7 @@
   const header = document.querySelector('[data-header]');
   if (header) {
     let last = scrollY, ticking = false;
-    const opener = document.querySelector('.hero');
+    const opener = document.querySelector('.hero, .svc-hero');
     const update = () => {
       const y = scrollY;
       const limit = opener && header.hasAttribute('data-overlay') ? opener.offsetHeight - 80 : 40;
@@ -202,6 +202,14 @@
     let t = false;
     const f = () => { t = false; const y = Math.min(scrollY, innerHeight); heroMedia.style.transform = `translate3d(0, ${(y * 0.28).toFixed(1)}px, 0) scale(${(1 + y / innerHeight * 0.06).toFixed(4)})`; };
     addEventListener('scroll', () => { if (!t) { t = true; requestAnimationFrame(f); } }, { passive: true });
+  }
+
+  // --- details strip: arrow buttons page the scroll-snap strip
+  const strip = document.querySelector('[data-strip]');
+  if (strip) {
+    const step = () => strip.querySelector('li')?.getBoundingClientRect().width + 14 || 400;
+    document.querySelector('[data-strip-prev]')?.addEventListener('click', () => strip.scrollBy({ left: -step() * 2, behavior: 'smooth' }));
+    document.querySelector('[data-strip-next]')?.addEventListener('click', () => strip.scrollBy({ left: step() * 2, behavior: 'smooth' }));
   }
 
   // --- lightbox for project photographs

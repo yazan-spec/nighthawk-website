@@ -96,6 +96,7 @@ export const projects = [
   {
     title: 'Oakmont Beer Garden',
     sectors: ['hospitality'],
+    hidden: true, // removed from the site at the owner's request (October 2026); photos kept on disk
     narrative:
       'Indoor bars and an outdoor garden under string lights, built to hold a crowd.',
   },

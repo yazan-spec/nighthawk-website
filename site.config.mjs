@@ -32,11 +32,11 @@ export default {
     // Cinematic sequence of stills, shown until the construction film exists.
     // Each entry: project slug + photo index (see content/photo-manifest.txt), optional portrait index for phones.
     slides: [
-      { project: '12459-mooremeadow', index: 3, mobile: 2 },
+      { project: '12459-mooremeadow', index: 4, mobile: 10 },
       { project: 'the-james-whiskey-bar', index: 0, mobile: 1 },
-      { project: '7210-dearborn', index: 1 },
-      { project: 'fioras-wine-bar', index: 1, mobile: 7 },
-      { project: 'duo-spin-pilates', index: 2 },
+      { project: '7210-dearborn', index: 2 },
+      { project: 'fioras-wine-bar', index: 18, mobile: 5 },
+      { project: 'duo-spin-pilates', index: 0 },
     ],
     interval: 7000, // ms per still
     video: null,
@@ -58,17 +58,20 @@ export default {
     ],
   },
 
-  // Homepage "Selected work": full-screen panels, in order. index = photo number in that project's photo list (0 = cover).
+  // Homepage "Selected work": full-screen panels, in order. index = position in that project's photo list (0 = cover = photograph 01 on disk).
   featured: [
     { project: 'the-james-whiskey-bar', index: 0 },
-    { project: '12459-mooremeadow', index: 3 },
+    { project: '12459-mooremeadow', index: 4 },
     { project: 'fioras-wine-bar', index: 0 },
     { project: '7210-dearborn', index: 0 },
-    { project: '2727-kirby', index: 4 },
-    { project: 'duo-spin-pilates', index: 1 },
+    { project: '2727-kirby', index: 2 },
+    { project: 'duo-spin-pilates', index: 2 },
   ],
-  // Homepage "More from the portfolio" grid (covers).
-  moreWork: ['permission-whiskey-bar', '10143-kerrwood', 'oakmont-beer-garden', '9851-warwana', 'duo-coffee', '10135-kerrwood'],
+  // Homepage "Details" strip: the owner's hand-picked photographs (project title + photograph number as on disk).
+  details: [
+    ['1703 Reverse', 17], ['1810 Woodcrest', 19], ['7210 Dearborn', 5], ['DUO Coffee', 6], ['1703 Reverse', 13],
+    ['1810 Woodcrest', 18], ['7210 Dearborn', 8], ['DUO Coffee', 3], ['1703 Reverse', 6], ['1810 Woodcrest', 23], ['1703 Reverse', 16],
+  ],
 
   // Contact form. 'netlify' works with no backend when deployed to Netlify.
   // Set provider to 'endpoint' and `endpoint` to a Formspree/Basin/own URL for other hosts.
