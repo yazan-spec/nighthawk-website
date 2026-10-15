@@ -36,7 +36,7 @@ export default {
       { project: 'fioras-wine-bar', index: 0, mobile: 5 },
       { project: 'duo-spin-pilates', index: 0 },
       { project: '12459-mooremeadow', index: 5, mobile: 5 },
-      { project: 'permission-whiskey-bar', index: 0 },
+      { project: 'permission-whiskey-bar', index: 0, mobile: 1 },
     ],
     interval: 7000, // ms per still
     video: null,

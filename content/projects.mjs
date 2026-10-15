@@ -75,6 +75,7 @@ export const projects = [
   {
     title: 'Permission Whiskey Bar',
     sectors: ['hospitality'],
+    cardCover: 1, // the 3:2 angled dusk shot on portfolio cards; the wide front shot leads the page and the home hero
     narrative:
       'Floor-to-ceiling shelving in warm timber turns the collection into the room itself, with velvet booths and a lit bar below.',
     credits: { photography: 'Mark Johnson Photography' },

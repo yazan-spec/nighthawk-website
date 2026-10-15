@@ -162,7 +162,7 @@ function sectorNames(ctx, p) {
 function card(ctx, url, p) {
   return `<li class="card" data-reveal>
   <a href="${url.to(`projects/${p.slug}/`)}" data-view>
-    <figure class="card-fig">${img(ctx, url, p.cover, { sizes: '(min-width: 1024px) 33vw, (min-width: 600px) 50vw, 100vw', alt: '' })}</figure>
+    <figure class="card-fig">${img(ctx, url, p.card, { sizes: '(min-width: 1024px) 33vw, (min-width: 600px) 50vw, 100vw', alt: '' })}</figure>
     <div class="card-cap"><h3 class="card-title">${esc(p.title)}</h3><p class="card-meta">${sectorNames(ctx, p)}</p></div>
   </a>
 </li>`;

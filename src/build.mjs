@@ -153,6 +153,7 @@ function buildProjects() {
       images,
       extras,
       cover: images[0],
+      card: images[m.cardCover ?? 0],
       order,
       location: m.location ?? null,
       sequence: [],
