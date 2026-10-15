@@ -433,11 +433,11 @@ html.lenis { scroll-behavior: auto; }
 @media (max-width: 1023px) { .seo-title, .seo-text { grid-column: 1 / -1; } }
 
 /* ---------------------------------------------------------------- services: hero + reel */
-.svc-hero { position: relative; height: 100svh; min-height: 640px; display: grid; align-content: end; background: var(--ink); overflow: hidden; }
-.svc-hero-fig { position: absolute; inset: 0; }
-.svc-hero-fig img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
-.svc-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(12, 11, 10, 0.97) 0%, rgba(12, 11, 10, 0.7) 35%, rgba(12, 11, 10, 0.05) 62%), linear-gradient(to bottom, rgba(12, 11, 10, 0.45), rgba(12, 11, 10, 0) 25%); pointer-events: none; }
-.svc-hero-copy { position: relative; z-index: 1; display: grid; gap: 14px; padding-bottom: clamp(20px, 3vw, 36px); max-width: 44em; }
+.svc-hero { position: relative; background: var(--ink); overflow: hidden; padding-top: calc(var(--hh) + env(safe-area-inset-top, 0px)); }
+.svc-hero-fig { position: relative; }
+.svc-hero-fig img { width: 100%; height: auto; display: block; }
+.svc-hero-fig::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--ink) 0%, rgba(20, 18, 16, 0.6) 22%, rgba(20, 18, 16, 0) 55%), linear-gradient(to bottom, rgba(20, 18, 16, 0.6), rgba(20, 18, 16, 0) 30%); pointer-events: none; }
+.svc-hero-copy { position: relative; z-index: 1; display: grid; gap: 14px; margin-top: clamp(-120px, -9vw, -40px); padding-bottom: clamp(20px, 3vw, 36px); max-width: 44em; }
 .svc-hero .page-title { font-size: var(--t-l); max-width: 16em; }
 .svc-hero .page-lede { font-size: var(--t-b); max-width: 38em; }
 .svc-hero .page-title em { font-style: normal; font-weight: 500; }
@@ -445,7 +445,7 @@ html.lenis { scroll-behavior: auto; }
 .svc-index a { display: grid; gap: 8px; font: 500 var(--t-xs) / 1.4 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-2); transition: color 0.4s; }
 .svc-index a:hover { color: var(--fg); }
 .svc-index span { color: var(--brass); font-family: var(--serif); letter-spacing: 0.08em; }
-@media (max-width: 1023px) { .svc-index { grid-template-columns: repeat(3, 1fr); row-gap: 14px; } .svc-hero .page-lede { display: none; } }
+@media (max-width: 1023px) { .svc-index { grid-template-columns: repeat(3, 1fr); row-gap: 14px; } .svc-hero-copy { margin-top: -24px; } }
 
 .panel--svc { display: block; }
 .panel--svc figure { position: absolute; inset: 0; transform-origin: center; will-change: transform; }
