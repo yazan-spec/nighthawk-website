@@ -139,6 +139,16 @@ html.lenis { scroll-behavior: auto; }
 @keyframes veil-fade { to { opacity: 0; } }
 .no-veil .veil, html:not(.js) .veil { display: none; }
 
+/* ---------------------------------------------------------------- cursor: a small ring that follows the pointer; a magnifier over photographs that open larger */
+.cursor { position: fixed; left: 0; top: 0; z-index: 95; width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(236, 230, 218, 0.9); background: rgba(20, 18, 16, 0.25); pointer-events: none; transform: translate(-50%, -50%); display: grid; place-items: center; color: var(--bone); opacity: 0; transition: width 0.35s var(--ease), height 0.35s var(--ease), opacity 0.3s, background-color 0.3s; }
+.cursor.on { opacity: 1; }
+.cursor svg { opacity: 0; transition: opacity 0.25s; }
+.cursor.zoom { width: 40px; height: 40px; background: rgba(20, 18, 16, 0.35); backdrop-filter: blur(2px); }
+.cursor.zoom svg { opacity: 1; }
+.cursor.link { width: 22px; height: 22px; }
+@media (pointer: coarse), (prefers-reduced-motion: reduce) { .cursor { display: none; } }
+@media (pointer: fine) { .js.has-cursor body, .js.has-cursor a, .js.has-cursor button, .js.has-cursor .zoom { cursor: none; } }
+
 /* ---------------------------------------------------------------- header */
 .site-header {
   position: fixed; inset: 0 0 auto 0; z-index: 60;
@@ -164,22 +174,18 @@ html.lenis { scroll-behavior: auto; }
 .nav a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px; background: var(--brass); transform: scaleX(0); transform-origin: left; transition: transform 0.6s var(--ease); }
 .nav a:hover::after, .nav a[aria-current]::after { transform: scaleX(1); }
 
-.menu-btn { display: none; justify-self: end; font: 500 var(--t-xs) / 1 var(--sans); letter-spacing: 0.18em; text-transform: uppercase; padding: 12px 0 12px 12px; }
-
-.menu { position: fixed; inset: 0; z-index: 55; background: var(--ink-2); padding: calc(var(--hh) + env(safe-area-inset-top, 0px) + 20px) var(--g) calc(36px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; }
-.menu-inner { display: grid; gap: 44px; min-height: 100%; align-content: space-between; }
-.menu-main { display: grid; gap: 4px; }
-.menu-main a { font: 300 clamp(2.4rem, 10vw, 4.4rem) / 1.1 var(--serif); letter-spacing: -0.03em; display: block; }
-.menu-contact { font-size: var(--t-s); color: var(--fg-2); line-height: 1.9; border-top: 1px solid var(--line); padding-top: 24px; }
-body.menu-open .site-header { background: transparent; backdrop-filter: none; border-color: transparent; }
-body.menu-open .site-header::before { opacity: 0; }
-body.menu-open { overflow: hidden; }
 
 @media (max-width: 1023px) {
   :root { --hh: 72px; }
-  .nav { display: none; }
-  .menu-btn { display: block; }
   .wordmark img { height: 44px; }
+  .nav ul { gap: clamp(14px, 3vw, 28px); }
+  .nav a { letter-spacing: 0.12em; }
+}
+@media (max-width: 480px) {
+  .site-header { gap: 12px; }
+  .wordmark img { height: 38px; }
+  .nav ul { gap: 12px; }
+  .nav a { font-size: 0.62rem; letter-spacing: 0.08em; }
 }
 
 /* ---------------------------------------------------------------- hero */

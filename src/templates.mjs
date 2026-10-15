@@ -88,22 +88,7 @@ function header(ctx, url, { route, overlay }) {
   <nav class="nav" aria-label="Primary">
     <ul>${NAV.map(([r, l]) => `<li><a href="${url.to(r)}"${current(r)}>${l}</a></li>`).join('')}</ul>
   </nav>
-  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>
-    <span class="menu-btn-label">Menu</span>
-  </button>
-</header>
-<div class="menu" id="menu" data-menu hidden>
-  <nav class="menu-inner" aria-label="Menu">
-    <ul class="menu-main">
-      ${NAV.map(([r, l]) => `<li><a href="${url.to(r)}">${l}</a></li>`).join('')}
-    </ul>
-    <p class="menu-contact">
-      <a class="selectable" href="mailto:${config.contact.email}">${config.contact.email}</a><br>
-      <a class="selectable" href="tel:${config.contact.phoneE164}">${config.contact.phone}</a><br>
-      ${config.contact.street}, ${config.contact.city}, ${config.contact.region} ${config.contact.postalCode}
-    </p>
-  </nav>
-</div>`;
+</header>`;
 }
 
 function footer(ctx, url) {
@@ -136,6 +121,7 @@ function page(ctx, { title, description, ogImage, body, jsonld, bodyClass = '', 
   return `${head(ctx, url, { title, description, ogImage, route, jsonld })}
 <body class="${bodyClass}">
 ${veil ? `<div class="veil" data-veil aria-hidden="true"><img class="veil-mark" src="${url.asset('brand/logo-light.png')}" width="1359" height="549" alt=""><span class="veil-rule"></span></div>` : ''}
+<div class="cursor" data-cursor aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></div>
 ${header(ctx, url, { route, overlay })}
 <main id="main">
 ${body(url)}

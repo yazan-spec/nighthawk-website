@@ -35,8 +35,8 @@ export default {
       { project: 'the-james-whiskey-bar', index: 0, mobile: 1 },
       { project: 'fioras-wine-bar', index: 0, mobile: 5 },
       { project: 'duo-spin-pilates', index: 0 },
-      { project: '12459-mooremeadow', index: 5, mobile: 5 },
-      { project: 'permission-whiskey-bar', index: 0, mobile: 1 },
+      { project: '12459-mooremeadow', index: 3, mobile: 5 },
+      { project: 'permission-whiskey-bar', index: 1 },
     ],
     interval: 7000, // ms per still
     video: null,
@@ -62,9 +62,9 @@ export default {
   featured: [
     { project: 'the-james-whiskey-bar', index: 0 },
     { project: '12459-mooremeadow', index: 4 },
-    { project: 'fioras-wine-bar', index: 0 },
-    { project: '6911-hartland', index: 0 },
-    { project: '2727-kirby', index: 2 },
+    { project: 'fioras-wine-bar', index: 7 },
+    { project: '6911-hartland', index: 17 },
+    { project: '2727-kirby', index: 0 },
     { project: 'duo-spin-pilates', index: 2 },
   ],
   // Homepage "Details" strip: the owner's hand-picked photographs (project title + photograph number as on disk).

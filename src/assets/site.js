@@ -91,20 +91,20 @@
     update();
   }
 
-  // --- menu
-  const btn = document.querySelector('[data-menu-btn]');
-  const menu = document.querySelector('[data-menu]');
-  if (btn && menu) {
-    const label = btn.querySelector('.menu-btn-label');
-    const set = (open) => {
-      menu.hidden = !open;
-      btn.setAttribute('aria-expanded', String(open));
-      body.classList.toggle('menu-open', open);
-      label.textContent = open ? 'Close' : 'Menu';
-      if (open) menu.querySelector('a')?.focus();
-    };
-    btn.addEventListener('click', () => set(menu.hidden));
-    addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); btn.focus(); } });
+  // --- cursor: a small ring everywhere, larger over links, a magnifier over photographs
+  const cursor = document.querySelector('[data-cursor]');
+  if (cursor && fine && !reduce) {
+    doc.classList.add('has-cursor');
+    let x = -100, y = -100, cx = x, cy = y;
+    addEventListener('mousemove', (e) => { x = e.clientX; y = e.clientY; cursor.classList.add('on'); }, { passive: true });
+    document.addEventListener('mouseleave', () => cursor.classList.remove('on'));
+    const loop = () => { cx += (x - cx) * 0.35; cy += (y - cy) * 0.35; cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`; requestAnimationFrame(loop); };
+    loop();
+    document.addEventListener('mouseover', (e) => {
+      const z = !!e.target.closest('.zoom');
+      cursor.classList.toggle('zoom', z);
+      cursor.classList.toggle('link', !z && !!e.target.closest('a, button'));
+    });
   }
 
   // --- hero: cinematic sequence of stills (or the film, when configured)
