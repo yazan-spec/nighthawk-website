@@ -391,7 +391,7 @@ export function project(ctx) {
     <a class="zoom" href="${cs.large}" data-zoom="0" aria-label="View cover photograph larger">${img(ctx, url, p.cover, { sizes: '(min-width: 1024px) 86vw, 100vw', alt: altFor(p, 0), eager: true })}</a>
   </figure>
   <section class="p-gallery wrap" aria-label="Photographs">
-    <ul class="masonry">
+    <ul class="masonry" data-masonry>
       ${all.slice(1).map((im, k) => { const s = ctx.imageSources(im, url); const i = k + 1; return `<li data-reveal><a class="zoom" href="${s.large}" data-zoom="${i}" aria-label="View photograph ${i + 1} larger">${img(ctx, url, im, { sizes: '(min-width: 1024px) 42vw, 100vw', alt: `${p.title}, photograph ${i + 1}` })}</a></li>`; }).join('\n      ')}
     </ul>
   </section>
@@ -437,7 +437,7 @@ export function services(ctx) {
     overlay: true,
     body: (url) => `
 <header class="svc-hero" aria-label="Services">
-  <figure class="svc-hero-fig">${img(ctx, url, ctx.studio(9), { sizes: '100vw', alt: 'Houston skyline at dusk', eager: true })}</figure>
+  <figure class="svc-hero-fig"><picture><source media="(max-aspect-ratio: 1/1)" srcset="${ctx.imageSources(ctx.bySlug['permission-whiskey-bar'].images[1], url).src}">${img(ctx, url, ctx.bySlug['permission-whiskey-bar'].images[0], { sizes: '100vw', alt: 'Permission Whiskey Bar at dusk, built by Nighthawk Construction Group, Houston', eager: true })}</picture></figure>
   <div class="svc-hero-copy wrap">
     <p class="label">Services · Houston, Texas</p>
     <h1 class="page-title">Above-and-beyond craftsmanship, <em>from concept to completion.</em></h1>

@@ -6,6 +6,10 @@
   const fine = matchMedia('(pointer: fine)').matches;
   const wide = () => innerWidth >= 1024;
 
+  // --- every page opens at the top (unless a #section was asked for)
+  try { history.scrollRestoration = 'manual'; } catch {}
+  if (!location.hash) { scrollTo(0, 0); addEventListener('pageshow', () => { if (!location.hash) scrollTo(0, 0); }); }
+
   // --- intro veil, then page in
   const veil = document.querySelector('[data-veil]');
   const start = () => body.classList.add('ready');
@@ -100,11 +104,7 @@
     document.addEventListener('mouseleave', () => cursor.classList.remove('on'));
     const loop = () => { cx += (x - cx) * 0.35; cy += (y - cy) * 0.35; cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`; requestAnimationFrame(loop); };
     loop();
-    document.addEventListener('mouseover', (e) => {
-      const z = !!e.target.closest('.zoom');
-      cursor.classList.toggle('zoom', z);
-      cursor.classList.toggle('link', !z && !!e.target.closest('a, button'));
-    });
+    document.addEventListener('mouseover', (e) => { cursor.classList.toggle('big', !!e.target.closest('[data-view], .zoom, a, button')); });
   }
 
   // --- hero: cinematic sequence of stills (or the film, when configured)
@@ -197,6 +197,24 @@
     const step = () => strip.querySelector('li')?.getBoundingClientRect().width + 14 || 400;
     document.querySelector('[data-strip-prev]')?.addEventListener('click', () => strip.scrollBy({ left: -step() * 2, behavior: 'smooth' }));
     document.querySelector('[data-strip-next]')?.addEventListener('click', () => strip.scrollBy({ left: step() * 2, behavior: 'smooth' }));
+  }
+
+  // --- project gallery: a grid in reading order (left to right), each photograph spanning rows by its height
+  const mas = document.querySelector('[data-masonry]');
+  if (mas) {
+    const unit = 8;
+    const layout = () => {
+      const gap = parseFloat(getComputedStyle(mas).rowGap) || 0;
+      mas.querySelectorAll('li').forEach((li) => {
+        const img = li.querySelector('img');
+        const w = li.getBoundingClientRect().width;
+        const h = w * (Number(img.getAttribute('height')) / Number(img.getAttribute('width')));
+        li.style.gridRowEnd = `span ${Math.max(1, Math.round((h + gap) / (unit + gap)))}`;
+      });
+    };
+    layout();
+    addEventListener('resize', layout);
+    mas.querySelectorAll('img').forEach((im) => im.addEventListener('load', layout));
   }
 
   // --- lightbox for project photographs
