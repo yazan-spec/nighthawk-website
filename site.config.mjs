@@ -32,11 +32,11 @@ export default {
     // Cinematic sequence of stills, shown until the construction film exists.
     // Each entry: project slug + photo index (see content/photo-manifest.txt), optional portrait index for phones.
     slides: [
-      { project: '12459-mooremeadow', index: 4, mobile: 10 },
       { project: 'the-james-whiskey-bar', index: 0, mobile: 1 },
-      { project: '7210-dearborn', index: 2 },
-      { project: 'fioras-wine-bar', index: 18, mobile: 5 },
+      { project: 'fioras-wine-bar', index: 0, mobile: 5 },
       { project: 'duo-spin-pilates', index: 0 },
+      { project: '12459-mooremeadow', index: 5, mobile: 5 },
+      { project: 'permission-whiskey-bar', index: 0 },
     ],
     interval: 7000, // ms per still
     video: null,
@@ -63,14 +63,16 @@ export default {
     { project: 'the-james-whiskey-bar', index: 0 },
     { project: '12459-mooremeadow', index: 4 },
     { project: 'fioras-wine-bar', index: 0 },
-    { project: '7210-dearborn', index: 0 },
+    { project: '6911-hartland', index: 0 },
     { project: '2727-kirby', index: 2 },
     { project: 'duo-spin-pilates', index: 2 },
   ],
   // Homepage "Details" strip: the owner's hand-picked photographs (project title + photograph number as on disk).
   details: [
-    ['1703 Reverse', 17], ['1810 Woodcrest', 19], ['7210 Dearborn', 5], ['DUO Coffee', 6], ['1703 Reverse', 13],
-    ['1810 Woodcrest', 18], ['7210 Dearborn', 8], ['DUO Coffee', 3], ['1703 Reverse', 6], ['1810 Woodcrest', 23], ['1703 Reverse', 16],
+    ['DUO Spin & Pilates', 2], ['6911 Hartland', 19], ['The James Whiskey Bar', 2], ['9851 Warwana', 11], ['1703 Reverse', 17],
+    ['DUO Spin & Pilates', 10], ['12459 Mooremeadow', 5], ["Fiora's Wine Bar", 1], ['1810 Woodcrest', 19], ['6911 Hartland', 17],
+    ['7210 Dearborn', 5], ['DUO Coffee', 6], ['The James Whiskey Bar', 3], ['1703 Reverse', 13], ['12459 Mooremeadow', 13],
+    ['DUO Spin & Pilates', 5], ['1810 Woodcrest', 18], ['7210 Dearborn', 8], ['DUO Coffee', 3], ['1703 Reverse', 6],
   ],
 
   // Contact form. 'netlify' works with no backend when deployed to Netlify.

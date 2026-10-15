@@ -50,19 +50,6 @@
   });
   addEventListener('pageshow', (e) => { if (e.persisted) body.classList.remove('leaving'); });
 
-  // --- custom cursor
-  const cursor = document.querySelector('[data-cursor]');
-  if (cursor && fine && !reduce) {
-    doc.classList.add('has-cursor');
-    let x = 0, y = 0, cx = -100, cy = -100;
-    addEventListener('mousemove', (e) => { x = e.clientX; y = e.clientY; cursor.classList.add('on'); }, { passive: true });
-    document.addEventListener('mouseleave', () => cursor.classList.remove('on'));
-    const loop = () => { cx += (x - cx) * 0.22; cy += (y - cy) * 0.22; cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`; requestAnimationFrame(loop); };
-    loop();
-    document.addEventListener('mouseover', (e) => { if (e.target.closest('[data-view], .zoom')) cursor.classList.add('big'); });
-    document.addEventListener('mouseout', (e) => { if (e.target.closest('[data-view], .zoom')) cursor.classList.remove('big'); });
-  }
-
   // --- reveals
   const io = new IntersectionObserver((entries) => {
     for (const en of entries) if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
@@ -235,6 +222,7 @@
       opener = a; show(Number(a.dataset.zoom)); box.showModal();
     });
     box.querySelector('[data-lightbox-close]').addEventListener('click', () => box.close());
+    box.addEventListener('click', (e) => { if (e.target === box) box.close(); });
     box.querySelector('[data-lightbox-prev]').addEventListener('click', () => show(i - 1));
     box.querySelector('[data-lightbox-next]').addEventListener('click', () => show(i + 1));
     box.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') show(i + 1); if (e.key === 'ArrowLeft') show(i - 1); });

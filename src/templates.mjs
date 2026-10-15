@@ -136,7 +136,6 @@ function page(ctx, { title, description, ogImage, body, jsonld, bodyClass = '', 
   return `${head(ctx, url, { title, description, ogImage, route, jsonld })}
 <body class="${bodyClass}">
 ${veil ? `<div class="veil" data-veil aria-hidden="true"><img class="veil-mark" src="${url.asset('brand/logo-light.png')}" width="1359" height="549" alt=""><span class="veil-rule"></span></div>` : ''}
-<div class="cursor" data-cursor aria-hidden="true"><span>View</span></div>
 ${header(ctx, url, { route, overlay })}
 <main id="main">
 ${body(url)}
@@ -145,7 +144,7 @@ ${footer(ctx, url)}
 <dialog class="lightbox" data-lightbox aria-label="Photograph viewer">
   <img alt="" data-lightbox-img>
   <p class="lb-count" data-lightbox-count></p>
-  <button class="lb-close" type="button" data-lightbox-close>Close</button>
+  <button class="lb-close" type="button" data-lightbox-close aria-label="Close"><span>Close</span> ×</button>
   <button class="lb-prev" type="button" data-lightbox-prev aria-label="Previous photograph"></button>
   <button class="lb-next" type="button" data-lightbox-next aria-label="Next photograph"></button>
 </dialog>
@@ -290,10 +289,14 @@ export function home(ctx) {
 </section>
 
 <section class="details" aria-labelledby="details-h">
-  <div class="wrap details-head"><h2 id="details-h" class="label">Details</h2><div class="details-ctl"><button type="button" data-strip-prev aria-label="Previous photographs">←</button><button type="button" data-strip-next aria-label="Next photographs">→</button></div></div>
+  <div class="wrap details-head"><h2 id="details-h" class="label">Details</h2><p class="details-note">Hand-picked photographs from across the portfolio</p></div>
+  <div class="strip-wrap">
+  <button class="strip-btn strip-btn--prev" type="button" data-strip-prev aria-label="Previous photographs"></button>
+  <button class="strip-btn strip-btn--next" type="button" data-strip-next aria-label="Next photographs"></button>
   <ul class="strip" data-strip>
     ${details.map(({ im, p }) => `<li><a href="${url.to(`projects/${p.slug}/`)}" data-view>${img(ctx, url, im, { sizes: '(min-width: 1024px) 38vw, 82vw', alt: `${p.title}, ${sectorNames(ctx, p).toLowerCase()} construction detail by Nighthawk, Houston` })}<span class="strip-cap">${esc(p.title)}</span></a></li>`).join('\n    ')}
   </ul>
+  </div>
   <p class="more-end wrap"><a class="btn" href="${url.to('projects/')}">View the full portfolio</a></p>
 </section>
 
@@ -448,7 +451,7 @@ export function services(ctx) {
     overlay: true,
     body: (url) => `
 <header class="svc-hero" aria-label="Services">
-  <figure class="svc-hero-fig">${img(ctx, url, ctx.studio(5), { sizes: '100vw', alt: 'Houston skyline at dusk', eager: true })}</figure>
+  <figure class="svc-hero-fig">${img(ctx, url, ctx.studio(9), { sizes: '100vw', alt: 'Houston skyline at dusk', eager: true })}</figure>
   <div class="svc-hero-copy wrap">
     <p class="label">Services · Houston, Texas</p>
     <h1 class="page-title">Above-and-beyond craftsmanship, <em>from concept to completion.</em></h1>

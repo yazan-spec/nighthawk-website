@@ -42,7 +42,7 @@ async function run({ slug, file }) {
     const out = path.join(OUT, `${base}-${w}.webp`);
     if (!fs.existsSync(out)) await sharp(input).rotate().resize({ width: w }).webp({ quality: 76, effort: 5 }).toFile(out);
   }
-  if (!manifest[key]) {
+  if (!manifest[key] || manifest[key].w !== meta.width || manifest[key].h !== meta.height) {
     const { dominant } = await sharp(input).resize(32).stats();
     manifest[key] = { base, w: meta.width, h: meta.height, widths, color: hex(dominant) };
   }
