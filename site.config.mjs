@@ -58,6 +58,18 @@ export default {
     ],
   },
 
+  // Homepage "Selected work": full-screen panels, in order. index = photo number in that project's photo list (0 = cover).
+  featured: [
+    { project: 'the-james-whiskey-bar', index: 0 },
+    { project: '12459-mooremeadow', index: 3 },
+    { project: 'fioras-wine-bar', index: 0 },
+    { project: '7210-dearborn', index: 0 },
+    { project: '2727-kirby', index: 4 },
+    { project: 'duo-spin-pilates', index: 1 },
+  ],
+  // Homepage "More from the portfolio" grid (covers).
+  moreWork: ['permission-whiskey-bar', '10143-kerrwood', 'oakmont-beer-garden', '9851-warwana', 'duo-coffee', '10135-kerrwood'],
+
   // Contact form. 'netlify' works with no backend when deployed to Netlify.
   // Set provider to 'endpoint' and `endpoint` to a Formspree/Basin/own URL for other hosts.
   form: { provider: 'netlify', endpoint: '' },

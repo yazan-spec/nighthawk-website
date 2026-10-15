@@ -66,9 +66,10 @@ ${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitte
 }
 
 const NAV = [
-  ['projects/', 'Projects'],
-  ['about/', 'About'],
-  ['process/', 'Process'],
+  ['', 'Home'],
+  ['projects/', 'Portfolio'],
+  ['services/', 'Services'],
+  ['contact/', 'Contact'],
 ];
 
 function header(ctx, url, { route, overlay }) {
@@ -77,62 +78,51 @@ function header(ctx, url, { route, overlay }) {
   return `<a class="skip" href="#main">Skip to content</a>
 <header class="site-header${overlay ? ' over-dark' : ''}" data-header${overlay ? ' data-overlay' : ''}>
   <a class="wordmark" href="${url.to('')}" aria-label="${esc(config.name)}, home">
-    <img class="wm-light" src="${url.asset('brand/emblem-light.png')}" width="1359" height="253" alt="">
-    <img class="wm-dark" src="${url.asset('brand/emblem-dark.png')}" width="1359" height="253" alt="">
-    <span class="wm-text">Nighthawk<small>Construction Group</small></span>
+    <img class="wm-light" src="${url.asset('brand/logo-light.png')}" width="1359" height="549" alt="">
+    <img class="wm-dark" src="${url.asset('brand/logo-dark.png')}" width="1359" height="549" alt="">
   </a>
   <nav class="nav" aria-label="Primary">
     <ul>${NAV.map(([r, l]) => `<li><a href="${url.to(r)}"${current(r)}>${l}</a></li>`).join('')}</ul>
   </nav>
-  <div class="header-right">
-    <a class="header-cta" href="${url.to('contact/')}"${current('contact/')}>Start a project</a>
-    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>
-      <span class="menu-btn-label">Menu</span>
-    </button>
-  </div>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>
+    <span class="menu-btn-label">Menu</span>
+  </button>
 </header>
 <div class="menu" id="menu" data-menu hidden>
   <nav class="menu-inner" aria-label="Menu">
     <ul class="menu-main">
-      <li><a href="${url.to('')}">Home</a></li>
       ${NAV.map(([r, l]) => `<li><a href="${url.to(r)}">${l}</a></li>`).join('')}
-      <li><a href="${url.to('contact/')}">Contact</a></li>
-    </ul>
-    <ul class="menu-sectors">
-      ${Object.entries(sectors).map(([k, s]) => `<li><a href="${url.to(k + '/')}">${s.name}</a></li>`).join('')}
     </ul>
     <p class="menu-contact">
-      <span class="selectable">${config.contact.email}</span><br>
-      <span class="selectable">${config.contact.phone}</span><br>
-      ${config.contact.street}, ${config.contact.city}
+      <a class="selectable" href="mailto:${config.contact.email}">${config.contact.email}</a><br>
+      <a class="selectable" href="tel:${config.contact.phoneE164}">${config.contact.phone}</a><br>
+      ${config.contact.street}, ${config.contact.city}, ${config.contact.region} ${config.contact.postalCode}
     </p>
   </nav>
 </div>`;
 }
 
 function footer(ctx, url) {
-  const { config, sectors } = ctx;
+  const { config } = ctx;
   const c = config.contact;
   return `<footer class="site-footer">
   <div class="wrap footer-grid">
+    <div class="footer-brand"><img src="${url.asset('brand/logo-light.png')}" width="1359" height="549" alt="${esc(config.name)}" loading="lazy"></div>
     <div class="footer-col fc-1">
-      <p class="label">Studio</p>
-      <address>${c.street}<br>${c.city}, ${c.region} ${c.postalCode}</address>
+      <p class="label">Contact</p>
       <p><a href="mailto:${c.email}">${c.email}</a><br><a href="tel:${c.phoneE164}">${c.phone}</a></p>
+      <address>${c.street}<br>${c.city}, ${c.region} ${c.postalCode}</address>
     </div>
-    <nav class="footer-col fc-2" aria-label="Sectors">
-      <p class="label">Work</p>
-      <ul>${Object.entries(sectors).map(([k, s]) => `<li><a href="${url.to(k + '/')}">${s.name}</a></li>`).join('')}
-      <li><a href="${url.to('projects/')}">All projects</a></li></ul>
+    <nav class="footer-col fc-2" aria-label="Site">
+      <p class="label">Site</p>
+      <ul>${NAV.map(([r, l]) => `<li><a href="${url.to(r)}">${l}</a></li>`).join('')}</ul>
     </nav>
-    <nav class="footer-col fc-3" aria-label="Company">
-      <p class="label">Company</p>
-      <ul><li><a href="${url.to('about/')}">About</a></li><li><a href="${url.to('process/')}">Process</a></li><li><a href="${url.to('contact/')}">Contact</a></li>
-      <li><a href="${config.social.instagram}" rel="noopener">Instagram</a></li><li><a href="${config.social.facebook}" rel="noopener">Facebook</a></li></ul>
+    <nav class="footer-col fc-3" aria-label="Follow">
+      <p class="label">Follow</p>
+      <ul><li><a href="${config.social.instagram}" rel="noopener">Instagram</a></li><li><a href="${config.social.facebook}" rel="noopener">Facebook</a></li></ul>
     </nav>
   </div>
-  <p class="wrap footer-big"><img src="${url.asset('brand/logo-light.png')}" width="1359" height="549" alt="${esc(config.name)}" loading="lazy"></p>
-  <p class="wrap footer-legal"><span>© ${new Date().getFullYear()} ${config.name}</span><span>Houston, Texas</span></p>
+  <p class="wrap footer-legal"><span>© ${new Date().getFullYear()} ${config.name}</span><span>General Construction · Project Management · Design + Build</span><span>Houston, Texas</span></p>
 </footer>`;
 }
 
@@ -166,62 +156,60 @@ function sectorNames(ctx, p) {
   return p.sectors.map((s) => ctx.sectors[s].name).join(', ');
 }
 
-function card(ctx, url, p, n) {
+function card(ctx, url, p) {
   return `<li class="card" data-reveal>
   <a href="${url.to(`projects/${p.slug}/`)}" data-view>
     <figure class="card-fig">${img(ctx, url, p.cover, { sizes: '(min-width: 1024px) 33vw, (min-width: 600px) 50vw, 100vw', alt: '' })}</figure>
-    <div class="card-cap"><span class="card-n">${pad(n)}</span><h3 class="card-title">${esc(p.title)}</h3><p class="card-meta">${sectorNames(ctx, p)}</p></div>
+    <div class="card-cap"><h3 class="card-title">${esc(p.title)}</h3><p class="card-meta">${sectorNames(ctx, p)}</p></div>
   </a>
 </li>`;
 }
 
 function cardGrid(ctx, url, list) {
-  return `<ul class="cards">${list.map((p, i) => card(ctx, url, p, i + 1)).join('\n')}</ul>`;
+  return `<ul class="cards">${list.map((p) => card(ctx, url, p)).join('\n')}</ul>`;
 }
 
 function contactBand(ctx, url) {
   const c = ctx.config.contact;
-  return `<section class="cta on-bone" aria-labelledby="cta-h">
+  return `<section class="cta" aria-labelledby="cta-h">
   <div class="wrap cta-grid">
-    <h2 id="cta-h" class="cta-title" data-reveal>Planning a house, a restaurant <em>or a build-out?</em></h2>
+    <div data-reveal>
+      <h2 id="cta-h" class="cta-title">Let us bring your vision to life.</h2>
+      <p class="cta-text">Tell us about the site, the space or the building you have in mind, and a member of our team will reach out.</p>
+    </div>
     <div class="cta-side" data-reveal>
-      <p class="label">Start a conversation</p>
       <p class="cta-lines"><a href="mailto:${c.email}">${c.email}</a><br><a href="tel:${c.phoneE164}">${c.phone}</a></p>
-      <a class="btn" href="${url.to('contact/')}">Start a project</a>
+      <a class="btn" href="${url.to('contact/')}">Contact us</a>
     </div>
   </div>
 </section>`;
 }
 
+// The four sectors Nighthawk serves (wording from nighthawkcg.com), each linking to its part of the Services page.
+const SECTOR_TILES = [
+  { key: 'commercial', name: 'Commercial Development & Tenant Build-Outs', anchor: 'commercial', img: { project: 'duo-spin-pilates', index: 2 } },
+  { key: 'residential', name: 'Residential New Construction & Renovations', anchor: 'residential', img: { project: '12459-mooremeadow', index: 1 } },
+  { key: 'hospitality', name: 'Restaurants, Bars & Nightclubs', anchor: 'hospitality', img: { project: 'the-james-whiskey-bar', index: 10 } },
+  { key: 'development', name: 'Builder Services & Investment Properties', anchor: 'investor', img: { project: '2926-fontana', index: 0 } },
+];
+
 const STEPS = [
-  { short: 'Brief', title: 'Brief and site', teaser: 'The site, the program, the budget and the timeline.',
-    body: 'Every project starts with the site and what you want to build on it: the program, the budget you are working to and the date you need to open or move in.',
-    img: { project: '10135-kerrwood', index: 2 } },
-  { short: 'Pre-construction', title: 'Pre-construction', teaser: 'Scope, cost and schedule settled before work begins.',
-    body: 'Scope, cost and sequence are worked through before anything is built, so decisions are made on paper rather than on site.',
-    img: { project: 'duo-coffee', index: 4 } },
-  { short: 'Design and drawings', title: 'Design and drawings', teaser: 'Design, architectural drawings and MEP engineering in-house.',
-    body: 'Interior and exterior design and architectural drawings, with mechanical, electrical and plumbing engineering drawings produced alongside them.',
-    img: { project: '12459-mooremeadow', index: 4 } },
-  { short: 'Permits', title: 'Permits', teaser: 'Applications and expediting so construction can start sooner.',
-    body: 'Permit acquisition and expediting are handled for you, to shorten the time between approved drawings and the first day on site.',
-    img: { project: '7210-dearborn', index: 3 } },
-  { short: 'Construction', title: 'Construction', teaser: 'One team managing trades, quality and schedule.',
-    body: 'One team manages the trades, the schedule and the quality of the work through to completion.',
-    img: { project: 'the-james-whiskey-bar', index: 2 } },
-  { short: 'Finish', title: 'Finishing and handover', teaser: 'Finishes, fixtures and the final details, then the keys.',
-    body: 'Finishes, fixtures and final details are completed and checked before the building is handed over.',
-    img: { project: 'fioras-wine-bar', index: 2 } },
+  { title: 'Brief', body: 'The site, the program, the budget and the timeline, understood before anything is drawn.' },
+  { title: 'Pre-construction', body: 'Scope, cost and schedule settled on paper, so decisions are made before they become expensive on site.' },
+  { title: 'Design & drawings', body: 'Interior and exterior design, architectural drawings and MEP engineering, produced in-house.' },
+  { title: 'Permits', body: 'Permit acquisition and expediting handled for you, so construction can begin sooner.' },
+  { title: 'Construction', body: 'One team managing the trades, the schedule and the quality of the work.' },
+  { title: 'Finishing & handover', body: 'Finishes, fixtures and the final details, checked before the keys are handed over.' },
 ];
 
 // ---------------------------------------------------------------- home
 export function home(ctx) {
-  const { config, featured, bySlug, photo, sectors, projects } = ctx;
+  const { config, bySlug, photo } = ctx;
   const h = config.hero;
   const slides = h.slides.map((s) => ({ p: bySlug[s.project], im: bySlug[s.project].images[s.index], mobile: s.mobile ? bySlug[s.project].images[s.mobile] : null }));
-  const interlude = bySlug['12459-mooremeadow'];
   const ogUrl = ctx.imageSources(slides[0].im, ctx.makeUrl('')).absLarge;
-  const railItems = featured.slice(0, 7);
+  const panels = config.featured.map((f) => ({ p: bySlug[f.project], im: bySlug[f.project].images[f.index] }));
+  const more = config.moreWork.map((slug) => bySlug[slug]);
 
   return page(ctx, {
     title: '',
@@ -246,11 +234,10 @@ export function home(ctx) {
       data-desktop='${esc(JSON.stringify(video.desktop))}' data-mobile='${esc(JSON.stringify(video.mobile || video.desktop))}'></video>` : ''}
   </div>
   <div class="hero-shade" aria-hidden="true"></div>
-  <div class="hero-brand" aria-hidden="true"><img src="${url.asset('brand/logo-light.png')}" width="1359" height="549" alt="" fetchpriority="high"></div>
   <div class="hero-copy">
     <div>
-      <h1 class="hero-title">From raw ground to the <em>finished room.</em></h1>
-      <p class="hero-sub">General contractor &amp; design + build, Houston</p>
+      <h1 class="hero-title">Turn your vision <em>into a reality.</em></h1>
+      <p class="hero-sub">General Construction · Project Management · Design + Build</p>
     </div>
     <div class="hero-side">
       <a class="hero-credit" href="${url.to(`projects/${slides[0].p.slug}/`)}" data-hero-credit>
@@ -265,110 +252,76 @@ export function home(ctx) {
   <button class="hero-pause" type="button" data-hero-pause aria-pressed="false">Pause film</button>` : ''}
 </section>
 
-<section class="statement wrap" aria-labelledby="intro-h">
-  <h2 id="intro-h" class="visually-hidden">About Nighthawk</h2>
-  <p class="statement-text" data-reveal>One team from the first drawing to the final finish. Design, engineering, permits and construction, <em>under one roof.</em></p>
-  <div class="statement-aside" data-reveal>
-    <p>Custom homes, bars and restaurants, and commercial build-outs across Houston, carried from concept through completion by the same people.</p>
-    <a class="link" href="${url.to('process/')}">How a project runs</a>
+<section class="intro wrap" aria-labelledby="intro-h">
+  <div class="intro-lead" data-reveal>
+    <p class="label">Nighthawk Construction Group · Houston, Texas</p>
+    <h2 id="intro-h" class="intro-title">One team, from the first concept to the finished build.</h2>
+  </div>
+  <div class="intro-text" data-reveal>
+    <p>Nighthawk streamlines the entire design + build process. Design, engineering, permitting and construction are handled by the same team, which means one point of accountability and no hassle of coordinating multiple contractors.</p>
+    <p>We deliver across commercial, residential, hospitality and investor projects, with all your construction needs under one set of wings.</p>
+    <ul class="intro-links">
+      <li><a class="link" href="${url.to('projects/')}">See our portfolio</a></li>
+      <li><a class="link" href="${url.to('services/')}">View our services</a></li>
+      <li><a class="link" href="${url.to('contact/')}">Contact us</a></li>
+    </ul>
   </div>
 </section>
 
 <section aria-labelledby="work-h">
-  <div class="stack-head wrap"><h2 id="work-h" class="label">Selected work</h2><span class="count" data-stack-count>01 / ${pad(railItems.length)}</span></div>
+  <div class="stack-head wrap"><h2 id="work-h" class="label">Selected work</h2><span class="count" data-stack-count>01 / ${pad(panels.length)}</span></div>
   <div class="stack" data-stack>
-    ${railItems.map((p, i) => {
-      const ref = RAIL_IMAGE[p.slug] ?? 0;
-      const im = p.images[ref];
-      return `<article class="panel" data-panel>
+    ${panels.map(({ p, im }, i) => `<article class="panel" data-panel>
       <a href="${url.to(`projects/${p.slug}/`)}" data-view>
         <figure data-panel-fig>${img(ctx, url, im, { sizes: '100vw', alt: '', eager: i === 0 })}</figure>
         <div class="panel-cap">
-          <div><span class="panel-n">${pad(i + 1)} / ${pad(railItems.length)}</span><h3 class="panel-title">${esc(p.title)}</h3><p class="panel-meta">${sectorNames(ctx, p)}</p></div>
+          <div><span class="panel-n">${pad(i + 1)} / ${pad(panels.length)}</span><h3 class="panel-title">${esc(p.title)}</h3><p class="panel-meta">${sectorNames(ctx, p)}</p></div>
           <span class="panel-view">View project</span>
         </div>
         <span class="panel-shade" data-panel-shade aria-hidden="true"></span>
       </a>
-    </article>`;
-    }).join('\n')}
+    </article>`).join('\n')}
   </div>
-  <p class="stack-end"><a class="btn" href="${url.to('projects/')}">All ${projects.length} projects</a></p>
 </section>
 
-<figure class="interlude" data-parallax>
-  ${img(ctx, url, interlude.images[1], { sizes: '100vw', alt: `${interlude.title}, exterior` })}
-  <figcaption class="wrap"><a href="${url.to(`projects/${interlude.slug}/`)}" data-view>${esc(interlude.title)}</a><span class="label">Custom residential</span></figcaption>
-</figure>
-
-<section class="sector-index wrap" aria-labelledby="sectors-h">
-  <h2 id="sectors-h" class="label section-label">By sector</h2>
-  <ul class="sl" data-sector-list>
-    ${Object.entries(sectors).map(([k, s], i) => {
-      const n = projects.filter((p) => p.sectors.includes(k)).length;
-      const im = photo(s.hero);
-      const si = ctx.imageSources(im, url);
-      return `<li class="sl-row" data-reveal><a href="${url.to(k + '/')}" data-preview="${si.src}">
-        <span class="sl-n">${pad(i + 1)}</span>
-        <span class="sl-name">${s.name}</span>
-        <span class="sl-count">${n ? plural(n, 'project', 'projects') : 'Builder services'}</span>
-        <span class="sl-lede">${esc(s.lede)}</span>
-      </a></li>`;
-    }).join('\n')}
-  </ul>
-  <figure class="sl-preview" data-sector-preview aria-hidden="true"><img alt=""></figure>
+<section class="more wrap" aria-labelledby="more-h">
+  <h2 id="more-h" class="label section-label">More from the portfolio</h2>
+  ${cardGrid(ctx, url, more)}
+  <p class="more-end"><a class="btn" href="${url.to('projects/')}">View the full portfolio</a></p>
 </section>
 
-<section class="on-bone">
-  <div class="steps wrap" aria-labelledby="steps-h">
-    <h2 id="steps-h" class="label section-label">How a project runs</h2>
-    <ol class="steps-row lines" data-reveal-lines>
-      ${STEPS.slice(0, 4).map((s, i) => `<li><span class="step-n">${pad(i + 1)}</span><h3 class="step-t">${s.short}</h3><p>${s.teaser}</p></li>`).join('')}
-    </ol>
-    <p class="steps-more"><a class="link" href="${url.to('process/')}">The full process</a></p>
+<section class="sectors on-bone" aria-labelledby="sectors-h">
+  <div class="wrap">
+    <h2 id="sectors-h" class="label section-label">Sectors we serve</h2>
+    <ul class="tiles">
+      ${SECTOR_TILES.map((t) => `<li class="tile" data-reveal><a href="${url.to('services/')}#${t.anchor}">
+        <figure class="tile-fig">${img(ctx, url, photo(t.img), { sizes: '(min-width: 1024px) 25vw, 50vw', alt: '' })}</figure>
+        <span class="tile-name">${t.name}</span>
+      </a></li>`).join('\n')}
+    </ul>
   </div>
-  ${contactBand(ctx, url)}
-</section>`;
+</section>
+
+${contactBand(ctx, url)}`;
     },
   });
 }
 
-// Which photograph each featured project shows on the homepage rail (index into its photo list).
-const RAIL_IMAGE = {
-  'the-james-whiskey-bar': 0,
-  '12459-mooremeadow': 3,
-  'fioras-wine-bar': 0,
-  '7210-dearborn': 0,
-  '2727-kirby': 4,
-  'duo-spin-pilates': 1,
-  '10135-kerrwood': 0,
-};
-
-// ---------------------------------------------------------------- projects index
+// ---------------------------------------------------------------- portfolio
 export function projectsIndex(ctx) {
-  const { projects, sectors, featured } = ctx;
+  const { projects, featured } = ctx;
   const rest = projects.filter((p) => !p.featured);
   const ordered = [...featured, ...rest];
   return page(ctx, {
-    title: 'Projects',
-    description: `Custom residences, hospitality interiors and commercial build-outs by Nighthawk Construction Group, Houston. ${projects.length} projects.`,
+    title: 'Portfolio',
+    description: 'Custom residences, restaurants and bars, and commercial build-outs by Nighthawk Construction Group, Houston.',
     body: (url) => `
 <header class="page-head wrap">
-  <h1 class="page-title">Projects</h1>
-  <p class="page-lede">${projects.length} projects across Houston, from custom residences to <em>bars, restaurants and commercial interiors.</em></p>
+  <h1 class="page-title">Portfolio</h1>
   ${filters(ctx, url, null)}
 </header>
-<section class="wrap" aria-label="All projects">
+<section class="wrap" aria-label="Projects">
   ${cardGrid(ctx, url, ordered)}
-</section>
-<section class="index wrap" aria-labelledby="index-h">
-  <h2 id="index-h" class="label section-label">Index</h2>
-  <div class="index-cols">
-  ${Object.entries(sectors).map(([k, s]) => {
-    const list = projects.filter((p) => p.sectors[0] === k);
-    if (!list.length) return '';
-    return `<div class="index-col"><h3 class="index-h"><a href="${url.to(k + '/')}">${s.name}</a></h3><ul>${list.map((p) => `<li><a href="${url.to(`projects/${p.slug}/`)}">${esc(p.title)}</a></li>`).join('')}</ul></div>`;
-  }).join('')}
-  </div>
 </section>
 ${contactBand(ctx, url)}`,
   });
@@ -376,83 +329,48 @@ ${contactBand(ctx, url)}`,
 
 function filters(ctx, url, active) {
   const { sectors, projects } = ctx;
+  const keys = Object.keys(sectors).filter((k) => projects.some((p) => p.sectors.includes(k)));
   return `<nav class="filters" aria-label="Filter by sector"><ul>
-    <li><a href="${url.to('projects/')}"${active ? '' : ' aria-current="page"'}>All <span>${projects.length}</span></a></li>
-    ${Object.entries(sectors).map(([k, s]) => {
-      const n = projects.filter((p) => p.sectors.includes(k)).length;
-      return `<li><a href="${url.to(k + '/')}"${active === k ? ' aria-current="page"' : ''}>${s.nav}${n ? ` <span>${n}</span>` : ''}</a></li>`;
-    }).join('')}
+    <li><a href="${url.to('projects/')}"${active ? '' : ' aria-current="page"'}>All</a></li>
+    ${keys.map((k) => `<li><a href="${url.to(k + '/')}"${active === k ? ' aria-current="page"' : ''}>${sectors[k].nav}</a></li>`).join('')}
   </ul></nav>`;
 }
 
 // ---------------------------------------------------------------- sector
 export function sector(ctx) {
-  const { sectors, projects, photo, key } = ctx;
+  const { sectors, projects, key } = ctx;
   const s = sectors[key];
   const list = projects.filter((p) => p.sectors.includes(key)).sort((a, b) => (a.featured || 99) - (b.featured || 99) || a.order - b.order);
-  const im = photo(s.hero);
   return page(ctx, {
     title: s.name,
-    overlay: true,
     description: `${s.name} by Nighthawk Construction Group, Houston. ${s.lede}`,
-    ogImage: ctx.imageSources(im, ctx.makeUrl('')).absLarge,
+    ogImage: ctx.imageSources(list[0].cover, ctx.makeUrl('')).absLarge,
     body: (url) => `
-<header class="sector-hero" data-parallax>
-  <figure class="sector-hero-fig">${img(ctx, url, im, { sizes: '100vw', alt: '', eager: true })}</figure>
-  <div class="sector-hero-copy wrap">
-    <p class="label">${list.length ? plural(list.length, 'project', 'projects') : 'Builder services'}</p>
-    <h1 class="page-title">${s.name}</h1>
-    <p class="sector-lede">${esc(s.lede)}</p>
-  </div>
+<header class="page-head wrap">
+  <p class="label">Portfolio</p>
+  <h1 class="page-title">${s.name}</h1>
+  ${filters(ctx, url, key)}
 </header>
-<div class="wrap sector-filters">${filters(ctx, url, key)}</div>
-${list.length ? `<section class="wrap" aria-label="${s.name} projects">${cardGrid(ctx, url, list)}</section>` : developmentBody(ctx, url)}
+<section class="wrap" aria-label="${s.name} projects">${cardGrid(ctx, url, list)}</section>
 ${contactBand(ctx, url)}`,
   });
 }
 
-function developmentBody(ctx, url) {
-  return `<section class="wrap dev" aria-labelledby="dev-h">
-  <h2 id="dev-h" class="dev-title" data-reveal>Working with builders and investors</h2>
-  <div class="dev-text" data-reveal>
-    <p>Builder services and investment properties are one of the four sectors Nighthawk serves. The same team that builds custom homes and commercial interiors handles design, drawings, permitting and construction for development work.</p>
-    <p>To discuss a site, a build-to-sell project or an investment property, <a class="link" href="${url.to('contact/')}">get in touch</a>.</p>
-  </div>
-</section>`;
-}
-
 // ---------------------------------------------------------------- project
-function block(ctx, url, p, b) {
-  const fig = (i, sizes, cls = '') => {
-    const im = p.images[i];
-    const s = ctx.imageSources(im, url);
-    return `<figure class="pf ri ${cls}" style="--r:${(im.w / im.h).toFixed(4)}" data-reveal-img><a class="zoom" href="${s.large}" data-zoom="${i}" aria-label="View photograph ${im.n} larger">${img(ctx, url, im, { sizes, alt: altFor(p, i) })}</a><span class="pf-n" aria-hidden="true">${pad(im.n)}</span></figure>`;
-  };
-  if (b.text) return p.narrative ? `<div class="b b-text wrap"><p class="narrative" data-reveal>${esc(p.narrative)}</p></div>` : '';
-  if (b.full !== undefined) return `<div class="b b-full">${fig(b.full, '100vw')}</div>`;
-  if (b.inset !== undefined) return `<div class="b b-inset wrap">${fig(b.inset, '(min-width: 1024px) 84vw, 100vw')}</div>`;
-  if (b.offset !== undefined) return `<div class="b b-offset b-offset--${b.side || 'right'} wrap">${fig(b.offset, '(min-width: 1024px) 60vw, 92vw')}</div>`;
-  if (b.detail !== undefined) return `<div class="b b-detail wrap">${fig(b.detail, '(min-width: 1024px) 34vw, 70vw')}</div>`;
-  const row = b.pair || b.trio;
-  const total = row.reduce((a, i) => a + p.images[i].w / p.images[i].h, 0);
-  return `<div class="b b-row b-row--${row.length} wrap">${row.map((i) => fig(i, `(min-width: 1024px) ${Math.round((p.images[i].w / p.images[i].h / total) * 90)}vw, 100vw`)).join('')}</div>`;
-}
-
 export function project(ctx) {
-  const { p, next } = ctx;
-  const fullHero = p.cover.w >= 1200 && p.cover.w / p.cover.h >= 1.2;
+  const { p, next, prev } = ctx;
   const credits = Object.entries(p.credits || {});
+  const all = [...p.images, ...p.extras];
   return page(ctx, {
     title: p.title,
     description: p.narrative ? `${p.narrative} ${sectorNames(ctx, p)} project by Nighthawk Construction Group.` : `${p.title}: a ${sectorNames(ctx, p).toLowerCase()} project by Nighthawk Construction Group, Houston.`,
     ogImage: ctx.imageSources(p.cover, ctx.makeUrl('')).absLarge,
     bodyClass: 'is-project',
-    overlay: fullHero,
     jsonld: [{
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Projects', item: `${ctx.config.url}/projects/` },
+        { '@type': 'ListItem', position: 1, name: 'Portfolio', item: `${ctx.config.url}/projects/` },
         { '@type': 'ListItem', position: 2, name: ctx.sectors[p.sectors[0]].name, item: `${ctx.config.url}/${p.sectors[0]}/` },
         { '@type': 'ListItem', position: 3, name: p.title, item: `${ctx.config.url}/projects/${p.slug}/` },
       ],
@@ -460,107 +378,97 @@ export function project(ctx) {
     body: (url) => {
       const cs = ctx.imageSources(p.cover, url);
       return `
-<article class="project" data-gallery='${esc(JSON.stringify([...p.images, ...p.extras].map((im) => ctx.imageSources(im, url).large).filter((u) => u !== '#')))}'>
-  <header class="p-hero ${fullHero ? 'p-hero--full' : 'p-hero--framed'}"${fullHero ? ' data-parallax' : ''}>
-    <figure class="p-hero-fig"><a class="zoom" href="${cs.large}" data-zoom="0" aria-label="View cover photograph larger">${img(ctx, url, p.cover, { sizes: fullHero ? '100vw' : '(min-width: 1024px) 70vw, 100vw', alt: altFor(p, 0), eager: true })}</a></figure>
-    <div class="p-hero-copy wrap">
-      <p class="p-kicker label">${sectorNames(ctx, p)}</p>
-      <h1 class="p-title">${esc(p.title)}</h1>
-    </div>
+<article class="project" data-gallery='${esc(JSON.stringify(all.map((im) => ctx.imageSources(im, url).large).filter((u) => u !== '#')))}'>
+  <header class="p-head wrap">
+    <p class="p-crumb"><a class="link" href="${url.to('projects/')}">Portfolio</a> <span>/</span> <a class="link" href="${url.to(p.sectors[0] + '/')}">${ctx.sectors[p.sectors[0]].name}</a></p>
+    <h1 class="p-title">${esc(p.title)}</h1>
+    ${p.narrative ? `<p class="p-narrative">${esc(p.narrative)}</p>` : ''}
+    ${credits.length || p.location ? `<dl class="p-meta">${p.location ? `<div><dt>Location</dt><dd>${esc(p.location)}</dd></div>` : ''}${credits.map(([k, v]) => `<div><dt>${esc(k[0].toUpperCase() + k.slice(1))}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : ''}
   </header>
-  <div class="p-meta wrap">
-    <dl>
-      <div><dt>Sector</dt><dd>${p.sectors.map((k) => `<a href="${url.to(k + '/')}">${ctx.sectors[k].name}</a>`).join(', ')}</dd></div>
-      ${p.location ? `<div><dt>Location</dt><dd>${esc(p.location)}</dd></div>` : ''}
-      ${credits.map(([k, v]) => `<div><dt>${esc(k[0].toUpperCase() + k.slice(1))}</dt><dd>${esc(v)}</dd></div>`).join('')}
-    </dl>
-  </div>
-  <div class="p-body">
-    ${p.sequence.map((b) => block(ctx, url, p, b)).join('\n    ')}
-  </div>
-  ${p.extras.length ? `<section class="p-all wrap" aria-labelledby="all-h">
-    <h2 id="all-h" class="label section-label">Complete photography <span class="count">${p.images.length + p.extras.length} photographs</span></h2>
-    <ul class="p-grid">
-      ${p.extras.map((im, k) => { const s = ctx.imageSources(im, url); const i = p.images.length + k; return `<li data-reveal><a class="zoom" href="${s.large}" data-zoom="${i}" aria-label="View photograph ${im.n} larger">${img(ctx, url, im, { sizes: '(min-width: 1024px) 33vw, 50vw', alt: `${p.title}, photograph ${im.n}` })}<span class="p-grid-n">${pad(im.n)}</span></a></li>`; }).join('')}
+  <figure class="p-cover wrap" data-reveal-img>
+    <a class="zoom" href="${cs.large}" data-zoom="0" aria-label="View cover photograph larger">${img(ctx, url, p.cover, { sizes: '(min-width: 1024px) 86vw, 100vw', alt: altFor(p, 0), eager: true })}</a>
+  </figure>
+  <section class="p-gallery wrap" aria-label="Photographs">
+    <ul class="masonry">
+      ${all.slice(1).map((im, k) => { const s = ctx.imageSources(im, url); const i = k + 1; return `<li data-reveal><a class="zoom" href="${s.large}" data-zoom="${i}" aria-label="View photograph ${i + 1} larger">${img(ctx, url, im, { sizes: '(min-width: 1024px) 42vw, 100vw', alt: `${p.title}, photograph ${i + 1}` })}</a></li>`; }).join('\n      ')}
     </ul>
-  </section>` : ''}
+  </section>
 </article>
-<nav class="p-next" aria-label="Next project" data-parallax>
-  <a href="${url.to(`projects/${next.slug}/`)}" data-view>
-    <figure>${img(ctx, url, next.cover, { sizes: '100vw', alt: '' })}</figure>
-    <span class="p-next-copy wrap"><span class="label">Next project</span><span class="p-next-title">${esc(next.title)}</span></span>
-  </a>
+<nav class="p-nav wrap" aria-label="Other projects">
+  <a class="p-nav-link p-nav-prev" href="${url.to(`projects/${prev.slug}/`)}" data-view><span class="label">Previous</span><span class="p-nav-title">${esc(prev.title)}</span></a>
+  <a class="p-nav-all btn" href="${url.to('projects/')}">All projects</a>
+  <a class="p-nav-link p-nav-next" href="${url.to(`projects/${next.slug}/`)}" data-view><span class="label">Next</span><span class="p-nav-title">${esc(next.title)}</span></a>
 </nav>`;
     },
   });
 }
 
-// ---------------------------------------------------------------- about
-export function about(ctx) {
-  const { bySlug, config, sectors } = ctx;
-  const a = bySlug['12459-mooremeadow'].images[2];
-  const b = bySlug['the-james-whiskey-bar'].images[1];
-  const c = bySlug['7210-dearborn'].images[3];
-  return page(ctx, {
-    title: 'About',
-    description: 'Nighthawk Construction Group is a Houston general contractor and design–build firm working across custom homes, hospitality and commercial construction.',
-    body: (url) => `
-<header class="page-head wrap">
-  <p class="label">Houston, Texas</p>
-  <h1 class="page-title">About</h1>
-</header>
-<section class="about wrap">
-  <p class="about-lede" data-reveal>A general contractor building custom homes, bars and restaurants, and commercial interiors <em>from one studio in Houston.</em></p>
-  <figure class="about-fig--a ri" data-reveal-img>${img(ctx, url, a, { sizes: '(min-width: 1024px) 30vw, 70vw', alt: '12459 Mooremeadow, fluted walnut cabinetry' })}</figure>
-  <div class="about-text" data-reveal>
-    <p>Nighthawk works with homeowners, restaurant and bar owners, and real-estate investors. Behind it is more than a decade of experience in investment property, project management and construction.</p>
-    <p>Design, drawings, engineering, permits and construction sit with one team. Clients deal with one point of responsibility instead of coordinating separate designers, engineers and contractors, from the first concept through completion.</p>
-  </div>
-  <figure class="about-fig--b ri" data-reveal-img>${img(ctx, url, b, { sizes: '(min-width: 1024px) 44vw, 100vw', alt: 'The James Whiskey Bar, arched timber corridor' })}</figure>
-</section>
-<section class="about-sectors wrap" aria-labelledby="as-h">
-  <h2 id="as-h" class="label section-label">Sectors</h2>
-  <ul class="as-list">
-    ${Object.entries(sectors).map(([k, s]) => `<li data-reveal><a href="${url.to(k + '/')}"><span class="as-name">${s.name}</span><span class="as-lede">${esc(s.lede)}</span></a></li>`).join('')}
-  </ul>
-</section>
-<figure class="interlude interlude--short" data-parallax>
-  ${img(ctx, url, c, { sizes: '100vw', alt: '7210 Dearborn, stair hall' })}
-</figure>
-<section class="about-place wrap" aria-labelledby="ap-h">
-  <h2 id="ap-h" class="label section-label">Studio</h2>
-  <address class="ap-address" data-reveal>${config.contact.street}<br>${config.contact.city}, ${config.contact.region} ${config.contact.postalCode}</address>
-  <p class="ap-lines"><a href="mailto:${config.contact.email}">${config.contact.email}</a><br><a href="tel:${config.contact.phoneE164}">${config.contact.phone}</a></p>
-</section>
-${contactBand(ctx, url)}`,
-  });
-}
+// ---------------------------------------------------------------- services
+// Wording adapted from nighthawkcg.com/services.
+const SERVICES = [
+  { id: 'design-build', title: 'Design–Build', studio: 6,
+    lead: 'A true one-stop shop for residential and commercial construction.',
+    body: ['Our integrated design–build process brings creative designers, skilled engineers and seasoned project managers together under one roof, so your vision is carried from concept to completion without hand-offs.',
+      'Every detail is managed before the first shovel hits the ground, so construction can begin sooner and finish stronger.'],
+    list: ['Interior and exterior design & architectural drawings', 'Mechanical, electrical and plumbing (MEP) engineering drawings', 'Permit acquisition and expediting to accelerate project start times'] },
+  { id: 'commercial', title: 'Commercial', studio: 1,
+    lead: 'Spaces that work for the business and express the brand.',
+    body: ['We focus on the quality of construction and on the functionality, efficiency and brand expression of every commercial environment. From concept to completion, we deliver projects that embody your brand and support its long-term success.'],
+    list: ['Office build-outs and renovations', 'Commercial tenant and retail spaces', 'Gyms and fitness centers', 'Med-spas and wellness facilities'] },
+  { id: 'residential', title: 'Residential', studio: 7,
+    lead: 'New construction and custom renovations, built by a team that cares.',
+    body: ['Your home deserves a builder who understands how to create refined living spaces. Our design–build team combines skilled craftsmanship with decades of experience to deliver exceptional project management and stunning interiors.',
+      'We source high-quality, cost-effective materials to exceed expectations and make your dream home a reality.'] },
+  { id: 'hospitality', title: 'Hospitality', studio: 5,
+    lead: 'Turnkey restaurants, bars and nightlife venues.',
+    body: ['With a proven track record in hospitality, including owning and operating some of Houston’s most successful nightlife venues, we understand how critical first impressions are. We bring that hands-on experience, strategic insight and tailored solutions to every venue we build.',
+      'Our turnkey construction concepts let you stay focused on your vision while we bring it to life with precision and efficiency.'] },
+  { id: 'investor', title: 'Investor & Builder Services', studio: 2,
+    lead: 'Cost-effective building strategies that maximize returns.',
+    body: ['Years of hands-on real estate investing have given us a deep understanding of cost-effective building across commercial and residential projects. We partner with investors on everything from single-family homes to multi-family and commercial developments, with exclusive services for high-volume clients.',
+      'Specializing in distressed properties, we apply proven strategies other contractors often overlook, helping you unlock hidden value and increase profitability.'] },
+  { id: 'cabinetry', title: 'Custom Cabinetry & Displays', studio: 3,
+    lead: 'Bespoke millwork that blends beauty with function.',
+    body: ['We design and build custom pieces for both residential and commercial projects, from striking retail displays and reception desks to timeless kitchens, closets and baths.'] },
+];
 
-// ---------------------------------------------------------------- process
-export function process(ctx) {
-  const { photo } = ctx;
+export function services(ctx) {
+  const { studio } = ctx;
   return page(ctx, {
-    title: 'Process',
-    description: 'How a Nighthawk project runs: brief, pre-construction, design and drawings, permits, construction and handover, delivered by one design–build team.',
+    title: 'Services',
+    description: 'Design–build, commercial, residential, hospitality and investor construction services from Nighthawk Construction Group, Houston.',
     body: (url) => `
 <header class="page-head wrap">
-  <p class="label">Six stages</p>
-  <h1 class="page-title">Process</h1>
-  <p class="page-lede">Design and construction under one roof. One team carries a project <em>from concept through completion.</em></p>
+  <h1 class="page-title">Services</h1>
+  <p class="page-lede">Above-and-beyond craftsmanship, from pre-construction through design, build and finishing, across commercial, residential, hospitality and investor projects.</p>
 </header>
-<ol class="process">
-  ${STEPS.map((s, i) => {
-    const im = photo(s.img);
-    return `<li class="ps ps--${i % 2 ? 'r' : 'l'} wrap">
-    <figure class="ps-fig ri" data-reveal-img>${img(ctx, url, im, { sizes: '(min-width: 1024px) 56vw, 100vw', alt: '' })}</figure>
-    <div class="ps-text" data-reveal>
-      <span class="step-n">${pad(i + 1)}</span>
-      <h2 class="ps-title">${s.title}</h2>
-      <p>${s.body}</p>
+<section class="svc-intro wrap" aria-label="Our approach">
+  <figure class="svc-intro-fig ri" data-reveal-img>${img(ctx, url, studio(4), { sizes: '(min-width: 1024px) 56vw, 100vw', alt: '' })}</figure>
+  <div class="svc-intro-text" data-reveal>
+    <p>Our mission is simple: to exceed every client’s expectations while delivering work we are truly passionate about. From initial concept through final completion, we bring the same care, precision and accountability to every project.</p>
+    <p>We combine impeccable design, expert construction and hands-on project management to deliver consistent, authentic and distinctive results, managing every phase of the process ourselves.</p>
+  </div>
+</section>
+<ol class="svc-list">
+  ${SERVICES.map((s, i) => `<li class="svc svc--${i % 2 ? 'r' : 'l'} wrap" id="${s.id}">
+    <figure class="svc-fig ri" data-reveal-img>${img(ctx, url, studio(s.studio), { sizes: '(min-width: 1024px) 50vw, 100vw', alt: '' })}</figure>
+    <div class="svc-text" data-reveal>
+      <span class="svc-n">${pad(i + 1)}</span>
+      <h2 class="svc-title">${s.title}</h2>
+      <p class="svc-lead">${s.lead}</p>
+      ${s.body.map((t) => `<p>${t}</p>`).join('')}
+      ${s.list ? `<ul class="svc-bullets">${s.list.map((t) => `<li>${t}</li>`).join('')}</ul>` : ''}
     </div>
-  </li>`;
-  }).join('\n')}
+  </li>`).join('\n')}
 </ol>
+<section class="steps on-bone" aria-labelledby="steps-h">
+  <div class="wrap">
+    <h2 id="steps-h" class="label section-label">How a project runs</h2>
+    <ol class="steps-row lines" data-reveal-lines>
+      ${STEPS.map((s, i) => `<li><span class="step-n">${pad(i + 1)}</span><h3 class="step-t">${s.title}</h3><p>${s.body}</p></li>`).join('')}
+    </ol>
+  </div>
+</section>
 ${contactBand(ctx, url)}`,
   });
 }
@@ -575,13 +483,12 @@ export function contact(ctx) {
     body: (url) => `
 <section class="contact wrap">
   <div class="contact-info">
-    <p class="label">Start a project</p>
     <h1 class="page-title">Contact</h1>
-    <p class="page-lede">Tell us about your site, your space <em>or your project.</em></p>
+    <p class="page-lede">Let us bring your vision to life. Fill out the form and a member of our team will reach out to assist with your project.</p>
     <dl class="contact-dl">
       <div><dt>Email</dt><dd><a class="selectable" href="mailto:${c.email}">${c.email}</a></dd></div>
       <div><dt>Phone</dt><dd><a class="selectable" href="tel:${c.phoneE164}">${c.phone}</a></dd></div>
-      <div><dt>Studio</dt><dd><address>${c.street}<br>${c.city}, ${c.region} ${c.postalCode}</address></dd></div>
+      <div><dt>Office</dt><dd><address>${c.street}<br>${c.city}, ${c.region} ${c.postalCode}</address></dd></div>
       <div><dt>Follow</dt><dd><a href="${config.social.instagram}" rel="noopener">Instagram</a>, <a href="${config.social.facebook}" rel="noopener">Facebook</a></dd></div>
     </dl>
   </div>
@@ -590,15 +497,14 @@ export function contact(ctx) {
     <p class="hp"><label>Leave this empty <input name="company-website" id="f-hp" tabindex="-1" autocomplete="off"></label></p>
     <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required></div>
     <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
-    <div class="field"><label for="f-phone">Phone <span class="opt">optional</span></label><input id="f-phone" name="phone" type="tel" autocomplete="tel"></div>
+    <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required></div>
     <div class="field"><label for="f-type">Project type</label>
       <select id="f-type" name="type">
-        <option>Custom residential</option><option>Hospitality</option><option>Commercial</option><option>Development</option><option>Something else</option>
+        <option>Residential</option><option>Commercial</option><option>Hospitality</option><option>Investor / builder services</option><option>Other</option>
       </select></div>
-    <div class="field"><label for="f-where">Site or neighbourhood <span class="opt">optional</span></label><input id="f-where" name="location"></div>
-    <div class="field field--wide"><label for="f-msg">About the project</label><textarea id="f-msg" name="message" rows="6" required></textarea></div>
+    <div class="field field--wide"><label for="f-msg">Message</label><textarea id="f-msg" name="message" rows="6" required></textarea></div>
     <div class="form-foot">
-      <button class="btn" type="submit">Send enquiry</button>
+      <button class="btn" type="submit">Send</button>
       <p class="form-status" role="status" data-form-status></p>
     </div>
   </form>
@@ -613,7 +519,7 @@ export function notFound(ctx) {
     body: (url) => `
 <section class="nf wrap">
   <h1 class="page-title">This page has moved or no longer exists.</h1>
-  <p class="page-lede">The site has been rebuilt and some addresses changed. Every project is listed on the <a class="link" href="${url.to('projects/')}">projects page</a>.</p>
+  <p class="page-lede">Every project is listed in the <a class="link" href="${url.to('projects/')}">portfolio</a>, and our services are described <a class="link" href="${url.to('services/')}">here</a>.</p>
 </section>`,
   });
 }

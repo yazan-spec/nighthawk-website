@@ -92,7 +92,7 @@
   const header = document.querySelector('[data-header]');
   if (header) {
     let last = scrollY, ticking = false;
-    const opener = document.querySelector('.hero, .sector-hero, .p-hero--full');
+    const opener = document.querySelector('.hero');
     const update = () => {
       const y = scrollY;
       const limit = opener && header.hasAttribute('data-overlay') ? opener.offsetHeight - 80 : 40;
@@ -202,29 +202,6 @@
     let t = false;
     const f = () => { t = false; const y = Math.min(scrollY, innerHeight); heroMedia.style.transform = `translate3d(0, ${(y * 0.28).toFixed(1)}px, 0) scale(${(1 + y / innerHeight * 0.06).toFixed(4)})`; };
     addEventListener('scroll', () => { if (!t) { t = true; requestAnimationFrame(f); } }, { passive: true });
-  }
-
-  // --- sector list: image follows the pointer (fine pointers only)
-  const list = document.querySelector('[data-sector-list]');
-  const prev = document.querySelector('[data-sector-preview]');
-  if (list && prev && fine && !reduce) {
-    const im = prev.querySelector('img');
-    let x = 0, y = 0, cx = 0, cy = 0, raf = 0;
-    const loop = () => {
-      cx += (x - cx) * 0.12; cy += (y - cy) * 0.12;
-      prev.style.transform = `translate3d(${cx + 32}px, ${cy - prev.offsetHeight / 2}px, 0)`;
-      raf = requestAnimationFrame(loop);
-    };
-    list.querySelectorAll('a[data-preview]').forEach((a) => {
-      a.addEventListener('mouseenter', (e) => {
-        im.src = a.dataset.preview;
-        if (!prev.classList.contains('is-on')) { cx = x = e.clientX; cy = y = e.clientY; }
-        prev.classList.add('is-on');
-        if (!raf) loop();
-      });
-    });
-    list.addEventListener('mousemove', (e) => { x = e.clientX; y = e.clientY; });
-    list.addEventListener('mouseleave', () => { prev.classList.remove('is-on'); cancelAnimationFrame(raf); raf = 0; });
   }
 
   // --- lightbox for project photographs

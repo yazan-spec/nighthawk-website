@@ -52,6 +52,14 @@ function parseManifest() {
   return map;
 }
 
+// studio photographs (media/originals/_studio/Studio-NN.*): drawings and general imagery used outside the portfolio
+function studio(n) {
+  const name = `Studio-${String(n).padStart(2, '0')}`;
+  const v = variantByBase[`_studio/${name}`];
+  if (!v) throw new Error(`Missing studio photograph ${name} (run npm run images)`);
+  return { id: `studio-${n}`, name, n, w: v.w, h: v.h, color: v.color, local: v, cdn: null };
+}
+
 // every photograph of a project, in the old site's order
 function allPhotos(title) {
   return Object.entries(photoIndex).filter(([, ix]) => ix.title === title).sort((a, b) => a[1].n - b[1].n).map(([id]) => photo(id));
@@ -229,6 +237,7 @@ function build() {
   if (Object.keys(variants).length && !PREVIEW) {
     const used = new Map();
     for (const p of projects) for (const im of [...p.images, ...p.extras]) if (im.local) used.set(im.local.base, im.local);
+    for (const [key, v] of Object.entries(variants)) if (key.startsWith('_studio/')) used.set(v.base, v);
     for (const [base, v] of used) {
       const widths = PREVIEW ? previewWidths(v) : v.widths;
       for (const w of widths) {
@@ -240,18 +249,18 @@ function build() {
     }
   }
 
-  const ctx = { config, sectors, projects, bySlug, featured, photo, hash, preview: PREVIEW, imageSources, makeUrl };
+  const ctx = { config, sectors, projects, bySlug, featured, photo, studio, hash, preview: PREVIEW, imageSources, makeUrl };
 
   const pages = [
     ['index.html', T.home],
     ['projects/index.html', T.projectsIndex],
-    ['about/index.html', T.about],
-    ['process/index.html', T.process],
+    ['services/index.html', T.services],
     ['contact/index.html', T.contact],
     ['404.html', T.notFound],
   ];
   for (const [file, tpl] of pages) write(file, tpl({ ...ctx, page: file }));
-  for (const key of Object.keys(sectors)) {
+  const sectorPages = Object.keys(sectors).filter((k) => projects.some((p) => p.sectors.includes(k)));
+  for (const key of sectorPages) {
     const file = `${key}/index.html`;
     write(file, T.sector({ ...ctx, page: file, key }));
   }
@@ -259,12 +268,14 @@ function build() {
     const file = `projects/${p.slug}/index.html`;
     // next project: next in the same primary sector, wrapping around
     const same = projects.filter((q) => q.sectors[0] === p.sectors[0]);
-    const next = same[(same.indexOf(p) + 1) % same.length];
-    write(file, T.project({ ...ctx, page: file, p, next }));
+    const k = same.indexOf(p);
+    const next = same[(k + 1) % same.length];
+    const prev = same[(k - 1 + same.length) % same.length];
+    write(file, T.project({ ...ctx, page: file, p, next, prev }));
   });
 
   // SEO files
-  const routes = ['', 'projects/', ...Object.keys(sectors).map((k) => `${k}/`), 'about/', 'process/', 'contact/',
+  const routes = ['', 'projects/', ...sectorPages.map((k) => `${k}/`), 'services/', 'contact/',
     ...projects.map((p) => `projects/${p.slug}/`)];
   const today = new Date().toISOString().slice(0, 10);
   write('sitemap.xml',
@@ -274,7 +285,8 @@ function build() {
   write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${config.url}/sitemap.xml\n`);
   // Old Squarespace URLs → new pages (Netlify / Cloudflare Pages format)
   write('_redirects', [
-    '/home / 301', '/portfolio-1 /projects/ 301', '/portfolio /projects/ 301', '/services /process/ 301', '/contact-us /contact/ 301',
+    '/home / 301', '/portfolio-1 /projects/ 301', '/portfolio /projects/ 301', '/contact-us /contact/ 301',
+    '/about /services/ 301', '/process /services/ 301', '/development /services/ 301',
     ...projects.map((p) => `/portfolio-1/${p.legacy} /projects/${p.slug}/ 301`),
   ].join('\n') + '\n');
   write('_headers', `/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n/img/*\n  Cache-Control: public, max-age=31536000, immutable\n`);
