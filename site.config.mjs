@@ -70,9 +70,11 @@ export default {
   // Homepage "Details" strip: the owner's hand-picked photographs (project title + photograph number as on disk).
   details: [
     ['The James Whiskey Bar', 1], ['DUO Spin & Pilates', 1], ['Permission Whiskey Bar', 5], ['DUO Spin & Pilates', 2], ['DUO Coffee', 3],
-    ["Fiora's Wine Bar", 1], ['2727 Kirby', 4], ['The James Whiskey Bar', 3], ['The James Whiskey Bar', 2], ['6911 Hartland', 18],
-    ['1703 Reverse', 13], ['9851 Warwana', 11], ['1810 Woodcrest', 18], ['DUO Coffee', 6], ['12459 Mooremeadow', 4],
+    ["Fiora's Wine Bar", 1], ['2727 Kirby', 4], ['6911 Hartland', 1], ['The James Whiskey Bar', 3], ['The James Whiskey Bar', 2],
+    ['1703 Reverse', 1], ['6911 Hartland', 18], ['1703 Reverse', 13], ['9851 Warwana', 1], ['9851 Warwana', 11],
+    ['1810 Woodcrest', 18], ['1810 Woodcrest', 1], ['DUO Coffee', 6], ['7210 Dearborn', 1], ['12459 Mooremeadow', 4],
     ['12459 Mooremeadow', 9], ['12459 Mooremeadow', 28], ['12459 Mooremeadow', 19], ['7210 Dearborn', 3], ['7210 Dearborn', 5],
+    ['10322 Raritan', 1],
   ],
 
   // Contact form. 'netlify' works with no backend when deployed to Netlify.

@@ -191,30 +191,50 @@
     addEventListener('scroll', () => { if (!t) { t = true; requestAnimationFrame(f); } }, { passive: true });
   }
 
-  // --- details strip: arrow buttons page the scroll-snap strip
+  // --- details strip: a centred wheel — the middle photograph full size, neighbours smaller — looping endlessly
   const strip = document.querySelector('[data-strip]');
   if (strip) {
-    const step = () => strip.querySelector('li')?.getBoundingClientRect().width + 14 || 400;
-    document.querySelector('[data-strip-prev]')?.addEventListener('click', () => strip.scrollBy({ left: -step() * 2, behavior: 'smooth' }));
-    document.querySelector('[data-strip-next]')?.addEventListener('click', () => strip.scrollBy({ left: step() * 2, behavior: 'smooth' }));
-  }
-
-  // --- project gallery: a grid in reading order (left to right), each photograph spanning rows by its height
-  const mas = document.querySelector('[data-masonry]');
-  if (mas) {
-    const unit = 8;
-    const layout = () => {
-      const gap = parseFloat(getComputedStyle(mas).rowGap) || 0;
-      mas.querySelectorAll('li').forEach((li) => {
-        const img = li.querySelector('img');
-        const w = li.getBoundingClientRect().width;
-        const h = w * (Number(img.getAttribute('height')) / Number(img.getAttribute('width')));
-        li.style.gridRowEnd = `span ${Math.max(1, Math.round((h + gap) / (unit + gap)))}`;
-      });
+    const real = [...strip.children];
+    const n = real.length;
+    const CLONES = Math.min(4, n);
+    real.slice(-CLONES).reverse().forEach((li) => strip.insertBefore(li.cloneNode(true), strip.firstChild));
+    real.slice(0, CLONES).forEach((li) => strip.appendChild(li.cloneNode(true)));
+    const items = () => [...strip.children];
+    const gap = () => parseFloat(getComputedStyle(strip).columnGap || getComputedStyle(strip).gap) || 0;
+    const stepW = () => items()[0].offsetWidth + gap();
+    const realW = () => stepW() * n;
+    const centerOf = (li) => li.offsetLeft + li.offsetWidth / 2;
+    const viewCenter = () => strip.scrollLeft + strip.clientWidth / 2;
+    const paint = () => {
+      const c = viewCenter();
+      let best = null, bd = Infinity;
+      items().forEach((li) => { const d = Math.abs(centerOf(li) - c); if (d < bd) { bd = d; best = li; } });
+      items().forEach((li) => li.classList.toggle('is-center', li === best));
     };
-    layout();
-    addEventListener('resize', layout);
-    mas.querySelectorAll('img').forEach((im) => im.addEventListener('load', layout));
+    const jumpTo = (li) => { strip.style.scrollBehavior = 'auto'; strip.scrollLeft = centerOf(li) - strip.clientWidth / 2; strip.style.scrollBehavior = ''; };
+    // start on the first real photograph
+    jumpTo(items()[CLONES]);
+    paint();
+    let t = 0;
+    const loopCheck = () => {
+      const x = strip.scrollLeft;
+      const lo = centerOf(items()[CLONES]) - strip.clientWidth / 2 - stepW() * 0.5;
+      const hi = lo + realW();
+      if (x < lo - stepW() * (CLONES - 1.5)) { strip.style.scrollBehavior = 'auto'; strip.scrollLeft = x + realW(); strip.style.scrollBehavior = ''; }
+      else if (x > hi + stepW() * (CLONES - 1.5)) { strip.style.scrollBehavior = 'auto'; strip.scrollLeft = x - realW(); strip.style.scrollBehavior = ''; }
+      paint();
+    };
+    strip.addEventListener('scroll', () => { paint(); clearTimeout(t); t = setTimeout(loopCheck, 90); }, { passive: true });
+    addEventListener('resize', () => { paint(); });
+    const go = (dir) => {
+      const c = viewCenter();
+      const sorted = items().map((li) => ({ li, d: centerOf(li) - c })).sort((a, b) => Math.abs(a.d) - Math.abs(b.d));
+      const cur = sorted[0].li;
+      const next = dir > 0 ? cur.nextElementSibling : cur.previousElementSibling;
+      if (next) strip.scrollTo({ left: centerOf(next) - strip.clientWidth / 2, behavior: 'smooth' });
+    };
+    document.querySelector('[data-strip-prev]')?.addEventListener('click', () => go(-1));
+    document.querySelector('[data-strip-next]')?.addEventListener('click', () => go(1));
   }
 
   // --- lightbox for project photographs
