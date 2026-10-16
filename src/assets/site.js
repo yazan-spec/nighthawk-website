@@ -107,6 +107,20 @@
     document.addEventListener('mouseover', (e) => { cursor.classList.toggle('big', !!e.target.closest('[data-view], .zoom, a, button')); });
   }
 
+  // --- phone menu: hamburger opens a side drawer
+  const drawer = document.querySelector('[data-drawer]');
+  const menuBtn = document.querySelector('[data-menu-open]');
+  if (drawer && menuBtn) {
+    let closing;
+    const open = () => { clearTimeout(closing); drawer.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => { body.classList.add('menu-open'); menuBtn.setAttribute('aria-expanded', 'true'); })); };
+    const close = () => { body.classList.remove('menu-open'); menuBtn.setAttribute('aria-expanded', 'false'); closing = setTimeout(() => { drawer.hidden = true; }, 500); };
+    menuBtn.addEventListener('click', () => (body.classList.contains('menu-open') ? close() : open()));
+    drawer.querySelectorAll('[data-menu-close]').forEach((el) => el.addEventListener('click', close));
+    drawer.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => { body.classList.remove('menu-open'); }));
+    addEventListener('keydown', (e) => { if (e.key === 'Escape' && body.classList.contains('menu-open')) close(); });
+    matchMedia('(min-width: 768px)').addEventListener('change', (e) => { if (e.matches) close(); });
+  }
+
   // --- hero: cinematic sequence of stills (or the film, when configured)
   const hero = document.querySelector('[data-hero]');
   if (hero) {

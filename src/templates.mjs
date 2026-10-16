@@ -88,7 +88,16 @@ function header(ctx, url, { route, overlay }) {
   <nav class="nav" aria-label="Primary">
     <ul>${NAV.map(([r, l]) => `<li><a href="${url.to(r)}"${current(r)}>${l}</a></li>`).join('')}</ul>
   </nav>
-</header>`;
+  <button class="menu-btn" type="button" data-menu-open aria-label="Open menu" aria-controls="drawer" aria-expanded="false"><span></span><span></span><span></span></button>
+</header>
+<div class="drawer" id="drawer" data-drawer hidden>
+  <div class="drawer-backdrop" data-menu-close></div>
+  <nav class="drawer-panel" aria-label="Menu">
+    <button class="drawer-close" type="button" data-menu-close aria-label="Close menu">&#x2715;</button>
+    <ul>${NAV.map(([r, l]) => `<li><a href="${url.to(r)}"${current(r)}>${l}</a></li>`).join('')}</ul>
+    <p class="drawer-foot"><a href="tel:${config.contact.phoneE164}">${config.contact.phone}</a><br><a href="mailto:${config.contact.email}">${config.contact.email}</a></p>
+  </nav>
+</div>`;
 }
 
 function footer(ctx, url) {
