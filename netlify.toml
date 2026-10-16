@@ -1,0 +1,8 @@
+# Netlify build settings — picked up automatically when the repo is imported.
+[build]
+  command = "npm install --no-audit --no-fund sharp && node scripts/process-images.mjs && node src/build.mjs"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
