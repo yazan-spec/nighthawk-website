@@ -408,7 +408,7 @@ export function project(ctx) {
 // ---------------------------------------------------------------- services
 // Wording adapted from nighthawkcg.com/services. Each service is one full-screen panel of the reel.
 const SERVICES = [
-  { id: 'design-build', title: 'Design–Build', img: (ctx) => ctx.studio(8), kicker: 'One roof, one team',
+  { id: 'design-build', title: 'Design–Build', img: (ctx) => ctx.studio(8), contain: true, kicker: 'One roof, one team',
     lead: 'A true one-stop shop for residential and commercial construction in Houston.',
     body: 'Creative designers, skilled engineers and seasoned project managers work together under one roof, so your vision is carried from concept to completion without hand-offs. Every detail is managed before the first shovel hits the ground, so construction begins sooner and finishes stronger.',
     list: ['Interior and exterior design & architectural drawings', 'Mechanical, electrical and plumbing (MEP) engineering drawings', 'Permit acquisition and expediting'] },
@@ -447,7 +447,7 @@ export function services(ctx) {
 </header>
 <div class="stack-head wrap"><h2 class="label">What we do</h2><span class="count" data-stack-count>01 / ${pad(SERVICES.length)}</span></div>
 <div class="stack" data-stack>
-  ${SERVICES.map((s, i) => `<section class="panel panel--svc" data-panel id="${s.id}" aria-labelledby="${s.id}-h">
+  ${SERVICES.map((s, i) => `<section class="panel panel--svc${s.contain ? ' panel--contain' : ''}" data-panel id="${s.id}" aria-labelledby="${s.id}-h">
     <figure data-panel-fig>${img(ctx, url, s.img(ctx), { sizes: '100vw', alt: '' })}</figure>
     <div class="svc-copy wrap">
       <p class="svc-kicker"><span class="svc-n">${pad(i + 1)} / ${pad(SERVICES.length)}</span>${s.kicker}</p>

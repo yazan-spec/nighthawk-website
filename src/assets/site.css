@@ -448,6 +448,11 @@ html.lenis { scroll-behavior: auto; }
 @media (max-width: 1023px) { .svc-index { grid-template-columns: repeat(3, 1fr); row-gap: 14px; } .svc-hero-copy { margin-top: -24px; } }
 
 .panel--svc { display: block; }
+/* a drawing shown whole: letterboxed on its own paper tone instead of cropped */
+.panel--contain figure { background: #efebe3; }
+.panel--contain img { object-fit: contain; object-position: center; }
+.panel--contain figure::after { background: linear-gradient(to right, rgba(10, 9, 8, 0.9) 0%, rgba(10, 9, 8, 0.7) 38%, rgba(10, 9, 8, 0.25) 70%, rgba(10, 9, 8, 0.15) 100%), linear-gradient(to top, rgba(10, 9, 8, 0.7), rgba(10, 9, 8, 0) 40%); }
+@media (max-width: 1023px) { .panel--contain figure::after { background: linear-gradient(to top, rgba(10, 9, 8, 0.95) 0%, rgba(10, 9, 8, 0.8) 45%, rgba(10, 9, 8, 0.3) 80%); } }
 .panel--svc figure { position: absolute; inset: 0; transform-origin: center; will-change: transform; }
 .panel--svc figure::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(10, 9, 8, 0.86) 0%, rgba(10, 9, 8, 0.6) 42%, rgba(10, 9, 8, 0.15) 75%), linear-gradient(to top, rgba(10, 9, 8, 0.7), rgba(10, 9, 8, 0) 45%); }
 .svc-copy { position: absolute; inset: 0; z-index: 1; display: grid; align-content: center; gap: 18px; max-width: min(46em, 100%); padding-top: var(--hh); }
