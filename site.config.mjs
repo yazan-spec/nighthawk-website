@@ -4,7 +4,7 @@
 export default {
   name: 'Nighthawk Construction Group',
   shortName: 'Nighthawk',
-  url: 'https://www.nighthawkcg.com', // canonical production origin (used for SEO tags + sitemap)
+  url: 'https://nighthawkcg.com', // canonical production origin (used for SEO tags + sitemap)
   locale: 'en_US',
   description:
     'Nighthawk Construction Group is a Houston general contractor and design–build firm delivering custom residences, hospitality interiors and commercial build-outs.',

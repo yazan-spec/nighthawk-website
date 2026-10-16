@@ -124,7 +124,7 @@ function footer(ctx, url) {
 </footer>`;
 }
 
-function page(ctx, { title, description, ogImage, body, jsonld, bodyClass = '', veil = false, overlay = false }) {
+function page(ctx, { title, description, ogImage = ctx.config.url + '/brand/share-card.png', body, jsonld, bodyClass = '', veil = false, overlay = false }) {
   const url = ctx.makeUrl(ctx.page);
   const route = ctx.page.replace(/index\.html$/, '').replace(/^404\.html$/, '404');
   return `${head(ctx, url, { title, description, ogImage, route, jsonld })}
@@ -205,7 +205,7 @@ export function home(ctx) {
   const { config, bySlug, photo } = ctx;
   const h = config.hero;
   const slides = h.slides.map((s) => ({ p: bySlug[s.project], im: bySlug[s.project].images[s.index], mobile: s.mobile ? bySlug[s.project].images[s.mobile] : null }));
-  const ogUrl = ctx.imageSources(slides[0].im, ctx.makeUrl('')).absLarge;
+  const ogUrl = ctx.config.url + '/brand/share-card.png';
   const panels = config.featured.map((f) => ({ p: bySlug[f.project], im: bySlug[f.project].images[f.index] }));
   const details = config.details.map(([title, n]) => ({ im: ctx.photoN(title, n), p: ctx.projects.find((q) => q.title === title) }));
 
@@ -355,7 +355,7 @@ export function sector(ctx) {
   return page(ctx, {
     title: `${s.name} Construction in Houston`,
     description: `${s.name} projects by Nighthawk Construction Group, a Houston general contractor and design-build firm. ${s.lede}`,
-    ogImage: ctx.imageSources(list[0].cover, ctx.makeUrl('')).absLarge,
+    ogImage: ctx.config.url + '/brand/share-card.png',
     body: (url) => `
 <header class="page-head wrap">
   <p class="p-crumb"><a class="link" href="${url.to('projects/')}">Portfolio</a></p>
