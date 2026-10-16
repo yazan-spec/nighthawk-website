@@ -237,6 +237,23 @@
     document.querySelector('[data-strip-next]')?.addEventListener('click', () => go(1));
   }
 
+  // --- project gallery: a grid in reading order (left to right), each photograph spanning rows by its height
+  const mas = document.querySelector('[data-masonry]');
+  if (mas) {
+    const unit = 8;
+    const layout = () => {
+      const gap = parseFloat(getComputedStyle(mas).rowGap) || 0;
+      mas.querySelectorAll('li').forEach((li) => {
+        const img = li.querySelector('img');
+        const w = li.getBoundingClientRect().width;
+        const h = w * (Number(img.getAttribute('height')) / Number(img.getAttribute('width')));
+        li.style.gridRowEnd = `span ${Math.max(1, Math.round((h + gap) / (unit + gap)))}`;
+      });
+    };
+    layout();
+    addEventListener('resize', layout);
+  }
+
   // --- lightbox for project photographs
   const box = document.querySelector('[data-lightbox]');
   const gallery = document.querySelector('[data-gallery]');
