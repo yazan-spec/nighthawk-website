@@ -186,12 +186,7 @@ html.lenis { scroll-behavior: auto; }
   .nav ul { gap: clamp(14px, 3vw, 28px); }
   .nav a { letter-spacing: 0.12em; }
 }
-@media (max-width: 480px) {
-  .site-header { gap: 12px; }
-  .wordmark img { height: 38px; }
-  .nav ul { gap: 12px; }
-  .nav a { font-size: 0.62rem; letter-spacing: 0.08em; }
-}
+
 
 /* ---------------------------------------------------------------- hero */
 .hero { position: relative; height: 100vh; height: 100svh; min-height: 600px; background: var(--ink); overflow: hidden; }
@@ -479,6 +474,48 @@ html.lenis { scroll-behavior: auto; }
 }
 @media (max-height: 640px) and (max-width: 1023px) { .svc-bullets { display: none; } }
 
+
+/* ---------------------------------------------------------------- phones: photographs shown whole, never cropped
+   The desktop shows every photograph full-bleed; a landscape photograph cannot fill a portrait screen without
+   losing its sides, so on phones each photograph sits in a 3:2 frame at full width with its copy beneath. */
+@media (max-width: 767px) {
+  /* header: logo on one row, the four links on a second row, so nothing can wrap into the content */
+  :root { --hh: 104px; }
+  .site-header { grid-template-columns: 1fr; grid-template-rows: auto auto; align-content: center; gap: 6px; justify-items: start; padding-bottom: 8px; }
+  .wordmark img { height: 40px; }
+  .nav { justify-self: start; }
+  .nav ul { gap: 18px; }
+  .nav a { font-size: 0.64rem; letter-spacing: 0.14em; padding-block: 4px; }
+
+  /* home hero: the same photographs as the desktop, whole, with the copy below */
+  .hero { height: auto; min-height: 0; padding-top: calc(var(--hh) + env(safe-area-inset-top, 0px)); display: grid; }
+  .hero-media { position: relative; inset: auto; aspect-ratio: 3 / 2; width: 100%; transform: none !important; }
+  .hero-slide img, .hero-video { object-fit: contain; background: var(--ink); }
+  .hero-shade { display: none; }
+  .hero-copy { position: relative; left: auto; right: auto; bottom: auto; padding: 24px var(--g) 40px; gap: 22px; }
+  .hero-title { font-size: var(--t-l); }
+  .hero-scroll, .hero-pause { display: none; }
+
+  /* reels (home + services): 3:2 frame, copy beneath */
+  .panel a, .panel--svc { display: grid; align-content: center; gap: 18px; padding-top: var(--hh); }
+  .panel figure, .panel--svc figure { position: relative; inset: auto; width: 100%; background: var(--ink); }
+  .panel img { width: 100%; height: auto; max-height: 62svh; object-fit: contain; background: var(--ink); }
+  .panel a::after, .panel--svc figure::after, .panel--contain figure::after { display: none; }
+  .panel--contain figure { background: var(--ink); }
+  .panel-cap { position: relative; left: auto; right: auto; bottom: auto; padding-inline: var(--g); gap: 10px; }
+  .panel-n { margin-bottom: 8px; }
+  .panel-title { font-size: var(--t-xl); }
+  .panel--svc img { max-height: 40svh; }
+  .svc-copy { position: relative; inset: auto; padding: 0 var(--g) 24px; align-content: start; gap: 8px; }
+  .svc-body { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+  .svc-title { font-size: var(--t-l); }
+  .svc-body { font-size: var(--t-s); line-height: 1.6; }
+  .svc-bullets { display: none; }
+  .svc-lead { font-size: var(--t-b); }
+
+  /* services opener */
+  .svc-hero-copy { margin-top: 0; padding-top: 16px; }
+}
 /* ---------------------------------------------------------------- lightbox */
 .lightbox { width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: var(--ink); }
 .lightbox::backdrop { background: var(--ink); }

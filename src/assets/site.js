@@ -185,7 +185,7 @@
 
   // --- hero: the picture eases back as the page starts to move
   const heroMedia = document.querySelector('.hero-media');
-  if (heroMedia && !reduce) {
+  if (heroMedia && !reduce && innerWidth >= 768) {
     let t = false;
     const f = () => { t = false; const y = Math.min(scrollY, innerHeight); heroMedia.style.transform = `translate3d(0, ${(y * 0.28).toFixed(1)}px, 0) scale(${(1 + y / innerHeight * 0.06).toFixed(4)})`; };
     addEventListener('scroll', () => { if (!t) { t = true; requestAnimationFrame(f); } }, { passive: true });

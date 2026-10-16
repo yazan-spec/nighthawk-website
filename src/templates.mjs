@@ -216,7 +216,7 @@ export function home(ctx) {
       const d = ctx.imageSources(s.im, url);
       const m = s.mobile ? ctx.imageSources(s.mobile, url) : null;
       return `<figure class="hero-slide${i === 0 ? ' is-on' : ''}" data-slide data-project="${esc(s.p.title)}" data-href="${url.to(`projects/${s.p.slug}/`)}">
-      <picture>${m ? `<source media="(max-width: 767px) and (orientation: portrait)" srcset="${m.src}">` : ''}
+      <picture>
       <img src="${d.src}"${d.srcset ? ` srcset="${d.srcset}" sizes="100vw"` : ""} width="${s.im.w}" height="${s.im.h}" alt="${esc(s.p.title)}"${i === 0 ? ' fetchpriority="high"' : ' loading="lazy"'} style="--tone:${s.im.color}"></picture>
     </figure>`;
     }).join('\n')}
