@@ -145,7 +145,14 @@ html.lenis { scroll-behavior: auto; }
 .cursor.big { width: 44px; height: 44px; }
 .cursor svg { display: none; }
 @media (pointer: coarse), (prefers-reduced-motion: reduce) { .cursor { display: none; } }
-@media (pointer: fine) { .js.has-cursor body, .js.has-cursor a, .js.has-cursor button, .js.has-cursor .zoom { cursor: none; } }
+@media (pointer: fine) {
+  .js.has-cursor body, .js.has-cursor a, .js.has-cursor button, .js.has-cursor .zoom { cursor: none; }
+  /* the photograph viewer sits above the custom cursor, so the normal pointer returns inside it */
+  .js.has-cursor .lightbox, .js.has-cursor .lightbox * { cursor: auto; }
+  .js.has-cursor .lb-close { cursor: pointer; }
+  .js.has-cursor .lb-prev { cursor: w-resize; }
+  .js.has-cursor .lb-next { cursor: e-resize; }
+}
 
 /* ---------------------------------------------------------------- header */
 .site-header {
