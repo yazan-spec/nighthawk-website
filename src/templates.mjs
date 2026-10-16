@@ -39,7 +39,7 @@ function head(ctx, url, { title, description, ogImage, route, jsonld = [] }) {
     },
     areaServed: { '@type': 'City', name: 'Houston' },
     sameAs: Object.values(config.social),
-    knowsAbout: ['General contracting', 'Design-build', 'Custom home construction', 'Home renovation', 'Restaurant and bar construction', 'Commercial tenant build-outs', 'Investor and builder services', 'Custom cabinetry and millwork'],
+    knowsAbout: ['General contracting', 'Design-build', 'Architecture and interior design', 'Custom home construction', 'Home renovation', 'Restaurant and bar construction', 'Commercial tenant build-outs', 'Investor and builder services', 'Custom cabinetry and millwork'],
     hasOfferCatalog: { '@type': 'OfferCatalog', name: 'Construction services', itemListElement: [
       'Design-build services', 'Residential new construction and renovations', 'Commercial construction and tenant build-outs',
       'Restaurant, bar and hospitality construction', 'Investor and builder services', 'Custom cabinetry and displays',
@@ -194,7 +194,7 @@ const SECTOR_TILES = [
 const STEPS = [
   { title: 'Brief', body: 'The site, the program, the budget and the timeline, understood before anything is drawn.' },
   { title: 'Pre-construction', body: 'Scope, cost and schedule settled on paper, so decisions are made before they become expensive on site.' },
-  { title: 'Design & drawings', body: 'Interior and exterior design, architectural drawings and MEP engineering, produced in-house.' },
+  { title: 'Design & drawings', body: 'Architecture, interior design, construction drawings and MEP engineering, produced in-house.' },
   { title: 'Permits', body: 'Permit acquisition and expediting handled for you, so construction can begin sooner.' },
   { title: 'Construction', body: 'One team managing the trades, the schedule and the quality of the work.' },
   { title: 'Finishing & handover', body: 'Finishes, fixtures and the final details, checked before the keys are handed over.' },
@@ -211,7 +211,7 @@ export function home(ctx) {
 
   return page(ctx, {
     title: '',
-    description: 'Nighthawk Construction Group is a Houston general contractor and design-build firm: custom homes and renovations, restaurant and bar construction, commercial tenant build-outs and investor services, from concept to completion.',
+    description: 'Nighthawk Construction Group is a Houston general contractor and design-build firm with architecture and interior design in-house: custom homes and renovations, restaurant and bar construction, commercial tenant build-outs and investor services, from concept to completion.',
     bodyClass: 'is-home',
     veil: true,
     overlay: true,
@@ -257,7 +257,7 @@ export function home(ctx) {
     <h2 id="intro-h" class="intro-title">One team, from concept to the finished product.</h2>
   </div>
   <div class="intro-text" data-reveal>
-    <p>Nighthawk Construction Group is a Houston general contractor and design-build firm. Design, engineering, permitting and construction are handled by the same team, which means one point of accountability and none of the hassle of coordinating multiple contractors.</p>
+    <p>Nighthawk Construction Group is a Houston general contractor and design-build firm. Architecture and interior design, engineering, permitting and construction are handled by the same team, which means one point of accountability and none of the hassle of coordinating multiple contractors.</p>
     <p>We build custom homes and renovations, restaurants and bars, and commercial spaces across Houston, with all your construction needs under one set of wings.</p>
     <ul class="intro-links">
       <li><a class="link" href="${url.to('projects/')}">See our portfolio</a></li>
@@ -310,7 +310,7 @@ export function home(ctx) {
 <section class="seo wrap" aria-labelledby="seo-h">
   <h2 id="seo-h" class="seo-title" data-reveal>A Houston general contractor for custom homes, restaurants and commercial spaces.</h2>
   <div class="seo-text" data-reveal>
-    <p>Based in Houston, Texas, Nighthawk Construction Group works with homeowners, restaurant and bar owners, business owners and real estate investors. As a design-build contractor we take projects from architectural drawings and MEP engineering through permitting, construction and finishing, so a new custom home, a whole-house renovation, a restaurant build-out or a commercial tenant improvement is delivered by one accountable team.</p>
+    <p>Based in Houston, Texas, Nighthawk Construction Group works with homeowners, restaurant and bar owners, business owners and real estate investors. As a design-build contractor we take projects from architecture and interior design through MEP engineering, permitting, construction and finishing, so a new custom home, a whole-house renovation, a restaurant build-out or a commercial tenant improvement is delivered by one accountable team.</p>
     <p>Backed by more than a decade of experience in investment properties, project management and construction, we bring proven problem-solving and a hands-on approach to every project, from spec homes for investors to high-end hospitality interiors.</p>
   </div>
 </section>
@@ -419,8 +419,8 @@ export function project(ctx) {
 const SERVICES = [
   { id: 'design-build', title: 'Design–Build', img: (ctx) => ctx.studio(8), contain: true, kicker: 'One roof, one team',
     lead: 'A true one-stop shop for residential and commercial construction in Houston.',
-    body: 'Creative designers, skilled engineers and seasoned project managers work together under one roof, so your vision is carried from concept to completion without hand-offs. Every detail is managed before the first shovel hits the ground, so construction begins sooner and finishes stronger.',
-    list: ['Interior and exterior design & architectural drawings', 'Mechanical, electrical and plumbing (MEP) engineering drawings', 'Permit acquisition and expediting'] },
+    body: 'Architects, interior designers, engineers and seasoned project managers work together under one roof, so your vision is carried from concept to completion without hand-offs. Every detail is managed before the first shovel hits the ground, so construction begins sooner and finishes stronger.',
+    list: ['Architecture, interior and exterior design & construction drawings', 'Mechanical, electrical and plumbing (MEP) engineering drawings', 'Permit acquisition and expediting'] },
   { id: 'residential', title: 'Residential', img: (ctx) => ctx.bySlug['12459-mooremeadow'].images[4], kicker: 'New construction & renovations',
     lead: 'Custom homes and whole-house renovations, built by a team that cares.',
     body: 'Your home deserves a builder who understands how to create refined living spaces. We combine skilled craftsmanship with decades of experience to deliver exceptional project management and stunning interiors, sourcing high-quality, cost-effective materials to make your dream home a reality.' },
@@ -442,7 +442,7 @@ const SERVICES = [
 export function services(ctx) {
   return page(ctx, {
     title: 'Construction Services in Houston: Design-Build, Residential, Commercial & Hospitality',
-    description: 'Nighthawk Construction Group’s services in Houston: design-build with in-house drawings and MEP engineering, custom home construction and renovations, commercial tenant build-outs, restaurant and bar construction, investor and builder services, and custom cabinetry.',
+    description: 'Nighthawk Construction Group’s services in Houston: design-build with in-house architecture, interior design and MEP engineering, custom home construction and renovations, commercial tenant build-outs, restaurant and bar construction, investor and builder services, and custom cabinetry.',
     overlay: true,
     body: (url) => `
 <header class="svc-hero" aria-label="Services">
