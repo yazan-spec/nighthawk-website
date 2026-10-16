@@ -83,7 +83,7 @@ export function makeUrl(page) {
   return {
     // route: '' | 'projects/' | 'projects/duo-coffee/'
     to(route) {
-      if (PREVIEW) return up + route + (route === '' || route.endsWith('/') ? 'index.html' : '');
+      if (PREVIEW) return up + (route === '' ? 'home/' : route) + (route === '' || route.endsWith('/') ? 'index.html' : '');
       return BASE + '/' + route;
     },
     asset(p) {
@@ -265,7 +265,7 @@ function build() {
   const ctx = { config, sectors, projects, bySlug, featured, photo, photoN, studio, hash, preview: PREVIEW, imageSources, makeUrl };
 
   const pages = [
-    ['index.html', T.home],
+    [PREVIEW ? 'home/index.html' : 'index.html', T.home],  // preview: the artifact entry page gets a host wrapper, so home lives in a plain file
     ['projects/index.html', T.projectsIndex],
     ['services/index.html', T.services],
     ['contact/index.html', T.contact],
