@@ -58,7 +58,7 @@ ${ctx.preview ? '<meta name="robots" content="noindex, nofollow">' : `<link rel=
 <meta property="og:title" content="${esc(title || config.name)}">
 <meta property="og:description" content="${esc(description || config.description)}">
 <meta property="og:url" content="${canonical}">
-${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitter:card" content="summary_large_image">` : ''}
+${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta property="og:image:secure_url" content="${ogImage}">${ogImage.endsWith('share-card.png') ? '\n<meta property="og:image:type" content="image/png">\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n<meta property="og:image:alt" content="Nighthawk Construction Group">' : ''}\n<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:image" content="${ogImage}">` : ''}
 <meta name="theme-color" content="#141210">
 <link rel="icon" href="${url.asset('favicon.svg')}" type="image/svg+xml">
 <link rel="preload" href="${url.asset('fonts/poppins-light.woff')}" as="font" type="font/woff" crossorigin>
