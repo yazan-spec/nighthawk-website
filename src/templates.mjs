@@ -61,6 +61,9 @@ ${ctx.preview ? '<meta name="robots" content="noindex, nofollow">' : `<link rel=
 ${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta property="og:image:secure_url" content="${ogImage}">${ogImage.endsWith('share-card.png') ? '\n<meta property="og:image:type" content="image/png">\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n<meta property="og:image:alt" content="Nighthawk Construction Group">' : ''}\n<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:image" content="${ogImage}">` : ''}
 <meta name="theme-color" content="#141210">
 <link rel="icon" href="${url.asset('favicon.svg')}" type="image/svg+xml">
+<link rel="icon" href="${url.asset('favicon.ico')}" sizes="48x48">
+<link rel="icon" href="${url.asset('favicon-48.png')}" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="${url.asset('apple-touch-icon.png')}">
 <link rel="preload" href="${url.asset('fonts/poppins-light.woff')}" as="font" type="font/woff" crossorigin>
 <link rel="preload" href="${url.asset('fonts/poppins-medium.woff')}" as="font" type="font/woff" crossorigin>
 <link rel="preload" href="${url.asset('fonts/poppins-regular.woff')}" as="font" type="font/woff" crossorigin>
