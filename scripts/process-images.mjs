@@ -38,6 +38,13 @@ async function run({ slug, file }) {
   const widths = WIDTHS.filter((w) => w < meta.width);
   if (!widths.length || meta.width - widths.at(-1) > 200) widths.push(Math.min(meta.width, 2200));
   fs.mkdirSync(path.join(OUT, slug), { recursive: true });
+  // a replaced original (newer than its variants) regenerates every size, so stale crops never linger
+  const srcTime = fs.statSync(input).mtimeMs;
+  const stale = (f) => fs.existsSync(f) && fs.statSync(f).mtimeMs < srcTime;
+  for (const f of fs.readdirSync(path.join(OUT, slug))) {
+    const full = path.join(OUT, slug, f);
+    if (f.startsWith(`${webName(file)}-`) && /-\d+\.webp$/.test(f) && stale(full)) fs.unlinkSync(full);
+  }
   for (const w of widths) {
     const out = path.join(OUT, `${base}-${w}.webp`);
     if (!fs.existsSync(out)) await sharp(input).rotate().resize({ width: w }).webp({ quality: 76, effort: 5 }).toFile(out);
