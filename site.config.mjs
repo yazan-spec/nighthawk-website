@@ -74,7 +74,7 @@ export default {
     ['1703 Reverse', 1], ['6911 Hartland', 18], ['1703 Reverse', 13], ['9851 Warwana', 1], ['9851 Warwana', 11],
     ['1810 Woodcrest', 18], ['1810 Woodcrest', 1], ['DUO Coffee', 6], ['7210 Dearborn', 1], ['12459 Mooremeadow', 4],
     ['12459 Mooremeadow', 9], ['12459 Mooremeadow', 28], ['12459 Mooremeadow', 19], ['7210 Dearborn', 3], ['7210 Dearborn', 5],
-    ['10322 Raritan', 1],
+    ['10322 Raritan', 1], ['Permission Whiskey Bar', 2],
   ],
 
   // Contact form. 'netlify' works with no backend when deployed to Netlify.
