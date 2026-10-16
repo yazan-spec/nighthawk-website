@@ -263,7 +263,7 @@ export function home(ctx) {
   <div class="stack" data-stack>
     ${panels.map(({ p, im }, i) => `<article class="panel" data-panel>
       <a href="${url.to(`projects/${p.slug}/`)}" data-view>
-        <figure data-panel-fig>${img(ctx, url, im, { sizes: '100vw', alt: '', eager: i === 0 })}</figure>
+        <figure data-panel-fig${im.w < im.h ? ' class="is-portrait"' : ''}>${img(ctx, url, im, { sizes: '100vw', alt: '', eager: i === 0 })}</figure>
         <div class="panel-cap">
           <div><span class="panel-n">${pad(i + 1)} / ${pad(panels.length)}</span><h3 class="panel-title">${esc(p.title)}</h3><p class="panel-meta">${sectorNames(ctx, p)}</p></div>
           <span class="panel-view">View project</span>
@@ -448,7 +448,7 @@ export function services(ctx) {
 <div class="stack-head wrap"><h2 class="label">What we do</h2><span class="count" data-stack-count>01 / ${pad(SERVICES.length)}</span></div>
 <div class="stack" data-stack>
   ${SERVICES.map((s, i) => `<section class="panel panel--svc${s.contain ? ' panel--contain' : ''}" data-panel id="${s.id}" aria-labelledby="${s.id}-h">
-    <figure data-panel-fig>${img(ctx, url, s.img(ctx), { sizes: '100vw', alt: '' })}</figure>
+    <figure data-panel-fig${s.img(ctx).w < s.img(ctx).h ? ' class="is-portrait"' : ''}>${img(ctx, url, s.img(ctx), { sizes: '100vw', alt: '' })}</figure>
     <div class="svc-copy wrap">
       <p class="svc-kicker"><span class="svc-n">${pad(i + 1)} / ${pad(SERVICES.length)}</span>${s.kicker}</p>
       <h2 id="${s.id}-h" class="svc-title">${s.title}</h2>

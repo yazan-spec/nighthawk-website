@@ -475,46 +475,58 @@ html.lenis { scroll-behavior: auto; }
 @media (max-height: 640px) and (max-width: 1023px) { .svc-bullets { display: none; } }
 
 
-/* ---------------------------------------------------------------- phones: photographs shown whole, never cropped
-   The desktop shows every photograph full-bleed; a landscape photograph cannot fill a portrait screen without
-   losing its sides, so on phones each photograph sits in a 3:2 frame at full width with its copy beneath. */
+/* ---------------------------------------------------------------- phones
+   The header sits in the page flow (never over a title). Photographs run edge to edge in a 3:2 frame
+   (4:5 for portrait shots); captions sit over the photograph on a soft rounded shade. */
 @media (max-width: 767px) {
-  /* header: logo on one row, the four links on a second row, so nothing can wrap into the content */
-  :root { --hh: 104px; }
-  .site-header { grid-template-columns: 1fr; grid-template-rows: auto auto; align-content: center; gap: 6px; justify-items: start; padding-bottom: 8px; }
+  :root { --hh: 0px; }
+  .site-header { position: static; height: auto; grid-template-columns: 1fr; grid-template-rows: auto auto; gap: 6px; justify-items: start; padding: calc(12px + env(safe-area-inset-top, 0px)) var(--g) 12px; background: var(--ink); border-bottom: 1px solid var(--line); transform: none !important; backdrop-filter: none; }
+  .site-header::before { display: none; }
   .wordmark img { height: 40px; }
   .nav { justify-self: start; }
   .nav ul { gap: 18px; }
   .nav a { font-size: 0.64rem; letter-spacing: 0.14em; padding-block: 4px; }
+  .page-head, .p-head { padding-top: clamp(28px, 7vw, 48px); }
+  .contact { padding-top: clamp(28px, 7vw, 48px); }
 
-  /* home hero: the same photographs as the desktop, whole, with the copy below */
-  .hero { height: auto; min-height: 0; padding-top: calc(var(--hh) + env(safe-area-inset-top, 0px)); display: grid; }
-  .hero-media { position: relative; inset: auto; aspect-ratio: 3 / 2; width: 100%; transform: none !important; }
-  .hero-slide img, .hero-video { object-fit: contain; background: var(--ink); }
+  /* home hero: one full screen, the photograph edge to edge, the copy over it on a rounded shade */
+  .hero { height: auto; min-height: 0; display: grid; align-content: start; padding: 0 0 24px; }
+  .hero-media { position: relative; inset: auto; width: 100%; aspect-ratio: 4 / 3; transform: none !important; }
+  .hero-slide img, .hero-video { object-fit: cover; }
   .hero-shade { display: none; }
-  .hero-copy { position: relative; left: auto; right: auto; bottom: auto; padding: 24px var(--g) 40px; gap: 22px; }
+  .hero-copy { position: relative; left: auto; right: auto; bottom: auto; margin: -96px 12px 0; z-index: 2; grid-template-columns: 1fr; gap: 16px; padding: 18px 18px 16px; border-radius: 16px; background: linear-gradient(to top, rgba(10, 9, 8, 0.86), rgba(10, 9, 8, 0.6)); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); }
   .hero-title { font-size: var(--t-l); }
+  .hero-side { justify-items: start; text-align: left; gap: 12px; }
   .hero-scroll, .hero-pause { display: none; }
 
-  /* reels (home + services): 3:2 frame, copy beneath */
-  .panel a, .panel--svc { display: grid; align-content: center; gap: 18px; padding-top: var(--hh); }
-  .panel figure, .panel--svc figure { position: relative; inset: auto; width: 100%; background: var(--ink); }
-  .panel img { width: 100%; height: auto; max-height: 62svh; object-fit: contain; background: var(--ink); }
+  /* reels: photograph edge to edge, caption over its lower edge */
+  .stack-head { padding-bottom: 14px; }
+  .stack { display: grid; gap: 10px; }
+  .panel { position: static; height: auto; }
+  .panel figure { transform: none !important; }
+  .panel-shade { display: none; }
+  .panel a { position: relative; inset: auto; display: block; }
+  .panel--svc { display: grid; align-content: start; gap: 0; padding-top: 0; }
+  .panel figure, .panel--svc figure { position: relative; inset: auto; width: 100%; aspect-ratio: 3 / 2; background: var(--ink); }
+  .panel figure.is-portrait { aspect-ratio: 4 / 5; }
+  .panel img { width: 100%; height: 100%; object-fit: cover; }
   .panel a::after, .panel--svc figure::after, .panel--contain figure::after { display: none; }
-  .panel--contain figure { background: var(--ink); }
-  .panel-cap { position: relative; left: auto; right: auto; bottom: auto; padding-inline: var(--g); gap: 10px; }
-  .panel-n { margin-bottom: 8px; }
-  .panel-title { font-size: var(--t-xl); }
-  .panel--svc img { max-height: 40svh; }
-  .svc-copy { position: relative; inset: auto; padding: 0 var(--g) 24px; align-content: start; gap: 8px; }
-  .svc-body { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+  .panel--contain img { object-fit: contain; }
+  .panel-cap { position: absolute; left: 12px; right: 12px; bottom: 12px; padding: 16px 18px 14px; border-radius: 14px; background: linear-gradient(to top, rgba(10, 9, 8, 0.82), rgba(10, 9, 8, 0.5)); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); gap: 8px; }
+  .panel-n { margin-bottom: 6px; }
+  .panel-title { font-size: var(--t-l); }
+  .svc-copy { position: relative; inset: auto; padding: 18px var(--g) 24px; align-content: start; gap: 8px; }
   .svc-title { font-size: var(--t-l); }
-  .svc-body { font-size: var(--t-s); line-height: 1.6; }
+  .svc-body { font-size: var(--t-s); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
   .svc-bullets { display: none; }
   .svc-lead { font-size: var(--t-b); }
+  .panel--svc img { max-height: none; }
 
   /* services opener */
+  .svc-hero { padding-top: 0; }
   .svc-hero-copy { margin-top: 0; padding-top: 16px; }
+  .svc-index { padding-bottom: 20px; }
+  .steps { padding-top: 40px; }
 }
 /* ---------------------------------------------------------------- lightbox */
 .lightbox { width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: var(--ink); }
