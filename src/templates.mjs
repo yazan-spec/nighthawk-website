@@ -18,7 +18,7 @@ function img(ctx, url, im, { sizes = '100vw', alt = '', eager = false, cls = '',
 const altFor = (p, i) => (p.alts && p.alts[i]) || `${p.title}, photograph ${p.images[i].n}`;
 
 // ---------------------------------------------------------------- shell
-function head(ctx, url, { title, description, ogImage, route, jsonld = [] }) {
+function head(ctx, url, { title, description, ogImage, route, jsonld = [], noindex = false }) {
   const { config } = ctx;
   const full = title ? `${title} | ${config.name}` : `${config.name} | Houston General Contractor & Design-Build Firm`;
   const canonical = url.abs(route);
@@ -52,7 +52,7 @@ function head(ctx, url, { title, description, ogImage, route, jsonld = [] }) {
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(full)}</title>
 <meta name="description" content="${esc(description || config.description)}">
-${ctx.preview ? '<meta name="robots" content="noindex, nofollow">' : `<link rel="canonical" href="${canonical}">`}
+${ctx.preview ? '<meta name="robots" content="noindex, nofollow">' : `<link rel="canonical" href="${canonical}">${noindex ? '\n<meta name="robots" content="noindex, follow">' : ''}`}
 <meta property="og:site_name" content="${esc(config.name)}">
 <meta property="og:type" content="website">
 <meta property="og:title" content="${esc(title || config.name)}">
@@ -127,10 +127,10 @@ function footer(ctx, url) {
 </footer>`;
 }
 
-function page(ctx, { title, description, ogImage = ctx.config.url + '/brand/share-card.png', body, jsonld, bodyClass = '', veil = false, overlay = false }) {
+function page(ctx, { title, description, ogImage = ctx.config.url + '/brand/share-card.png', body, jsonld, bodyClass = '', veil = false, overlay = false, noindex = false }) {
   const url = ctx.makeUrl(ctx.page);
   const route = ctx.page.replace(/index\.html$/, '').replace(/^404\.html$/, '404');
-  return `${head(ctx, url, { title, description, ogImage, route, jsonld })}
+  return `${head(ctx, url, { title, description, ogImage, route, jsonld, noindex })}
 <body class="${bodyClass}">
 ${veil ? `<div class="veil" data-veil aria-hidden="true"><img class="veil-mark" src="${url.asset('brand/logo-light.png')}" width="1359" height="549" alt=""><span class="veil-rule"></span></div>` : ''}
 <div class="cursor" data-cursor aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></div>
@@ -376,6 +376,7 @@ export function project(ctx) {
   const credits = Object.entries(p.credits || {});
   const all = [...p.images, ...p.extras];
   return page(ctx, {
+    noindex: true, // project pages stay reachable from the portfolio but are kept out of Google's results and sitelinks
     title: `${p.title} | ${sectorNames(ctx, p)} Construction in Houston`,
     description: `${p.title}: ${p.narrative ? p.narrative + ' ' : ''}A ${sectorNames(ctx, p).toLowerCase()} project built design-build by Nighthawk Construction Group, Houston general contractor.`,
     ogImage: ctx.imageSources(p.cover, ctx.makeUrl('')).absLarge,
