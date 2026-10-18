@@ -447,8 +447,8 @@ html.lenis { scroll-behavior: auto; }
 .svc-hero .page-lede { font-size: var(--t-b); max-width: 38em; }
 .svc-hero .page-title em { font-style: normal; font-weight: 500; }
 .svc-index { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--col); padding: 16px 0 clamp(24px, 4vw, 44px); border-top: 1px solid var(--line); margin-inline: var(--g); }
-.svc-index a { display: grid; gap: 8px; font: 500 var(--t-xs) / 1.4 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-2); transition: color 0.4s; }
-.svc-index a:hover { color: var(--fg); }
+.svc-index a { display: grid; gap: 8px; font: 500 var(--t-s) / 1.4 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--brass); transition: color 0.4s; }
+.svc-index a:hover { color: var(--bone); }
 .svc-index span { color: var(--brass); font-family: var(--serif); letter-spacing: 0.08em; }
 @media (max-width: 1023px) { .svc-index { grid-template-columns: repeat(3, 1fr); row-gap: 14px; } .svc-hero-copy { margin-top: -24px; } }
 
