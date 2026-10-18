@@ -271,13 +271,13 @@ export function home(ctx) {
 </section>
 
 <section aria-labelledby="work-h">
-  <div class="stack-head wrap"><h2 id="work-h" class="label">Selected work</h2><span class="count" data-stack-count>01 / ${pad(panels.length)}</span></div>
+  <div class="stack-head wrap"><h2 id="work-h" class="label">Featured projects</h2></div>
   <div class="stack" data-stack>
     ${panels.map(({ p, im }, i) => `<article class="panel" data-panel>
       <a href="${url.to(`projects/${p.slug}/`)}" data-view>
         <figure data-panel-fig${im.w < im.h ? ' class="is-portrait"' : ''}>${img(ctx, url, im, { sizes: '100vw', alt: '', eager: i === 0 })}</figure>
         <div class="panel-cap">
-          <div><span class="panel-n">${pad(i + 1)} / ${pad(panels.length)}</span><h3 class="panel-title">${esc(p.title)}</h3><p class="panel-meta">${sectorNames(ctx, p)}</p></div>
+          <div><h3 class="panel-title">${esc(p.title)}</h3><p class="panel-meta">${sectorNames(ctx, p)}</p></div>
           <span class="panel-view">View project</span>
         </div>
         <span class="panel-shade" data-panel-shade aria-hidden="true"></span>
@@ -455,14 +455,14 @@ export function services(ctx) {
     <h1 class="page-title">Above-and-beyond craftsmanship, <em>from concept to completion.</em></h1>
     <p class="page-lede">Our mission is simple: to exceed every client’s expectations while delivering work we are truly passionate about. Design, construction and hands-on project management, every phase handled by one team.</p>
   </div>
-  <ol class="svc-index" aria-label="Services on this page">${SERVICES.map((s, i) => `<li><a href="#${s.id}"><span>${pad(i + 1)}</span>${s.title}</a></li>`).join('')}</ol>
+  <ul class="svc-index" aria-label="Services on this page">${SERVICES.map((s) => `<li><a href="#${s.id}">${s.title}</a></li>`).join('')}</ul>
 </header>
-<div class="stack-head wrap"><h2 class="label">What we do</h2><span class="count" data-stack-count>01 / ${pad(SERVICES.length)}</span></div>
+<div class="stack-head wrap"><h2 class="label">What we do</h2></div>
 <div class="stack" data-stack>
   ${SERVICES.map((s, i) => `<section class="panel panel--svc${s.contain ? ' panel--contain' : ''}" data-panel id="${s.id}" aria-labelledby="${s.id}-h">
     <figure data-panel-fig${s.img(ctx).w < s.img(ctx).h ? ' class="is-portrait"' : ''}>${img(ctx, url, s.img(ctx), { sizes: '100vw', alt: '' })}</figure>
     <div class="svc-copy wrap">
-      <p class="svc-kicker"><span class="svc-n">${pad(i + 1)} / ${pad(SERVICES.length)}</span>${s.kicker}</p>
+      <p class="svc-kicker">${s.kicker}</p>
       <h2 id="${s.id}-h" class="svc-title">${s.title}</h2>
       <p class="svc-lead">${s.lead}</p>
       <p class="svc-body">${s.body}</p>
