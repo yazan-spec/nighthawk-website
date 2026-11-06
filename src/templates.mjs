@@ -377,7 +377,7 @@ export function project(ctx) {
   const all = [...p.images, ...p.extras];
   return page(ctx, {
     title: `${p.title} | ${sectorNames(ctx, p)} Construction in Houston`,
-    description: `${p.title}: ${p.narrative ? p.narrative + ' ' : ''}A ${sectorNames(ctx, p).toLowerCase()} project built design-build by Nighthawk Construction Group, Houston general contractor.`,
+    description: `${p.title}: a ${sectorNames(ctx, p).toLowerCase()} project built design-build by Nighthawk Construction Group, Houston general contractor.`,
     ogImage: ctx.imageSources(p.cover, ctx.makeUrl('')).absLarge,
     bodyClass: 'is-project',
     jsonld: [{
@@ -396,8 +396,6 @@ export function project(ctx) {
   <header class="p-head wrap">
     <p class="p-crumb"><a class="link" href="${url.to('projects/')}">Portfolio</a> <span>/</span> <a class="link" href="${url.to(p.sectors[0] + '/')}">${ctx.sectors[p.sectors[0]].name}</a></p>
     <h1 class="p-title">${esc(p.title)}</h1>
-    ${p.narrative ? `<p class="p-narrative">${esc(p.narrative)}</p>` : ''}
-    ${credits.length || p.location ? `<dl class="p-meta">${p.location ? `<div><dt>Location</dt><dd>${esc(p.location)}</dd></div>` : ''}${credits.map(([k, v]) => `<div><dt>${esc(k[0].toUpperCase() + k.slice(1))}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : ''}
   </header>
   <figure class="p-cover wrap" data-reveal-img>
     <a class="zoom" href="${cs.large}" data-zoom="0" aria-label="View cover photograph larger">${img(ctx, url, p.cover, { sizes: '(min-width: 1024px) 86vw, 100vw', alt: altFor(p, 0), eager: true })}</a>
